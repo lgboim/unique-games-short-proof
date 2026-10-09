@@ -1,0 +1,45 @@
+name: Presentation or typo
+description: Report a typo, an unclear passage, a wrong cross-reference, a broken link or a metadata problem.
+title: "[Presentation]: "
+labels: [presentation]
+body:
+  - type: markdown
+    attributes:
+      value: For an error in the mathematics itself, use the Mathematical error template instead.
+  - type: dropdown
+    id: paper
+    attributes:
+      label: Paper or file
+      options:
+        - "The Unique Games Theorem: A Short Self-Contained Proof"
+        - Companion note to the short proof
+        - "A Compressed Presentation of OpenAI's Proof of the Unique Games Theorem"
+        - README, metadata or other repository file
+    validations:
+      required: true
+  - type: input
+    id: location
+    attributes:
+      label: Location (section, page and line, or file)
+      placeholder: Section 2, page 4, line 12
+    validations:
+      required: true
+  - type: textarea
+    id: current
+    attributes:
+      label: Current text
+    validations:
+      required: true
+  - type: textarea
+    id: suggested
+    attributes:
+      label: Suggested text or explanation
+    validations:
+      required: true
+  - type: checkboxes
+    id: disclosure
+    attributes:
+      label: Security check
+      options:
+        - label: I have not included credentials, private paths, or non-public material.
+          required: true

@@ -1,0 +1,41 @@
+# LaTeX build outputs. Build into build/ (tectonic -X compile --outdir build ...) so the deposited PDFs are never overwritten.
+build/
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.fdb_latexmk
+*.fls
+*.out
+*.run.xml
+*.synctex.gz
+*.toc
+*.xdv
+papers/*.log
+
+# The unpacked Lean check output; the archived copy is lean_check/ugc_out.zip
+lean_check/ugc_out/
+
+# Secrets and local configuration
+.env
+.env.*
+*.pem
+*.key
+*.p12
+credentials*.json
+
+# Python, editor and operating-system artefacts
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.vscode/
+.idea/
+*.swp
+.DS_Store
+._*
+Thumbs.db
+
+# Local scratch outputs
+tmp/
+scratch/

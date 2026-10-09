@@ -1,10 +1,97 @@
 cff-version: 1.2.0
-message: "If you use this work, please cite it as below."
-title: "The Unique Games Theorem: A Short Self-Contained Proof"
+message: "If you use these papers, please cite the archived Zenodo releases below."
+title: "The Unique Games Theorem: a short self-contained proof and a compressed presentation of OpenAI's proof (papers, LaTeX sources and Lean check logs)"
+version: 1.0.0
+date-released: 2026-10-09
+doi: 10.5281/zenodo.23265572
+url: "https://doi.org/10.5281/zenodo.23265572"
+abstract: >-
+  Two expository preprints on OpenAI's proof of the Unique Games Theorem (23 September 2026),
+  with their LaTeX sources and the script and logs of a Comparator check of OpenAI's Lean 4
+  formalization of the source theorem. The short proof is self-contained apart from three
+  earlier theorems stated as inputs (Håstad's parity gap, the Khot–Minzer–Safra Grassmann
+  expansion theorem and Dinur–Steurer projection-game repetition) and simplifies several
+  steps of the source; a companion note lists every departure and its credits. The
+  compressed presentation follows the source closely. Both were prepared with AI models and
+  checked by separate AI reviewers; no human expert has reviewed them. The Lean check
+  concerns OpenAI's formal development, not these papers.
+keywords:
+  - Unique Games Conjecture
+  - Unique Games Theorem
+  - hardness of approximation
+  - PCP
+  - Grassmann graph
+  - parallel repetition
+  - noise gadget
+  - complexity theory
+  - exposition
+  - Lean 4
 authors:
   - family-names: Elboim
     given-names: Ariel
+    affiliation: Independent researcher
     orcid: "https://orcid.org/0009-0001-1341-366X"
-doi: 10.5281/zenodo.23265572
-date-released: 2026-10-09
+repository-code: "https://github.com/lgboim/unique-games-short-proof"
 license: CC-BY-4.0
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.23265572
+    description: "The Unique Games Theorem: A Short Self-Contained Proof, with its companion note, Version 1.0 (Zenodo)"
+  - type: doi
+    value: 10.5281/zenodo.23265571
+    description: "The Unique Games Theorem: A Short Self-Contained Proof, all versions (Zenodo concept DOI)"
+  - type: doi
+    value: 10.5281/zenodo.23264902
+    description: "A Compressed Presentation of OpenAI's Proof of the Unique Games Theorem, with the Lean check script and logs, Version 1.0 (Zenodo)"
+  - type: doi
+    value: 10.5281/zenodo.23264901
+    description: "A Compressed Presentation of OpenAI's Proof of the Unique Games Theorem, all versions (Zenodo concept DOI)"
+references:
+  - type: article
+    title: "The Unique Games Theorem"
+    authors:
+      - name: OpenAI
+    year: 2026
+    url: "https://github.com/openai/math/blob/main/preprints/The-Unique-Games-Theorem-September-23-2026/paper.pdf"
+    notes: "Preprint, 23 September 2026. The source of the theorem and its proof."
+  - type: article
+    title: "A Compressed Presentation of OpenAI's Proof of the Unique Games Theorem"
+    authors:
+      - family-names: Elboim
+        given-names: Ariel
+        orcid: "https://orcid.org/0009-0001-1341-366X"
+    year: 2026
+    doi: 10.5281/zenodo.23264902
+    url: "https://doi.org/10.5281/zenodo.23264902"
+    publisher:
+      name: Zenodo
+    notes: "Preprint, Version 1.0, 9 October 2026."
+preferred-citation:
+  type: article
+  title: "The Unique Games Theorem: A Short Self-Contained Proof"
+  authors:
+    - family-names: Elboim
+      given-names: Ariel
+      orcid: "https://orcid.org/0009-0001-1341-366X"
+  year: 2026
+  month: 10
+  doi: 10.5281/zenodo.23265572
+  url: "https://doi.org/10.5281/zenodo.23265572"
+  publisher:
+    name: Zenodo
+  notes: "Preprint, Version 1.0, 9 October 2026."
+  abstract: >-
+    We give a short proof of the theorem of OpenAI's preprint "The Unique Games Theorem"
+    (23 September 2026). It is self-contained apart from three earlier theorems, which are
+    stated as inputs: Håstad's parity gap, the Khot–Minzer–Safra Grassmann expansion theorem,
+    and Dinur–Steurer projection-game repetition. As in the source, the argument constructs
+    stable nonlinear noise, extracts constant-output certificates, decodes them using only
+    local information, and contradicts parallel repetition on clean coordinates. Relative to
+    the source, several steps are simplified: the noise gadget's recursion is written in
+    direct coordinates, and the survival of linear rank is proved by one induction on the
+    height; genericity is proved by formal differentiation; test acceptance is bounded
+    directly by the measure of good row fibers, without recoloring or concentration; the
+    second player guesses a constant output and Fourier-samples one row; and a triangle of
+    three equations replaces variable cloning. A companion note lists all departures from the
+    source and their credits. A longer presentation that follows the source closely is
+    doi:10.5281/zenodo.23264902.

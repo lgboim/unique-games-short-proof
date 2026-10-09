@@ -1,0 +1,19 @@
+Creative Commons Attribution 4.0 International
+
+Copyright (c) 2026 Ariel Elboim
+
+Except for the exclusions stated in LICENSE-SCOPE.md, the papers and the
+companion note (PDF and LaTeX source), the Lean check logs, the
+documentation, the citation metadata and the manifest covered by this
+notice are licensed under the Creative Commons Attribution 4.0
+International License.
+
+License summary: https://creativecommons.org/licenses/by/4.0/
+Legal code: https://creativecommons.org/licenses/by/4.0/legalcode
+
+Attribution should identify Ariel Elboim, the title of the paper, the
+version, and the persistent identifier:
+https://doi.org/10.5281/zenodo.23265572 for The Unique Games Theorem:
+A Short Self-Contained Proof and its companion note, and
+https://doi.org/10.5281/zenodo.23264902 for A Compressed Presentation of
+OpenAI's Proof of the Unique Games Theorem and the Lean check files.

@@ -1,0 +1,52 @@
+name: Reproduction of the Lean check
+description: Ask about, or report a discrepancy in, the Comparator check of OpenAI's Lean 4 formalization.
+title: "[Lean check]: "
+labels: [lean-check]
+body:
+  - type: markdown
+    attributes:
+      value: >-
+        Read Appendix A of the compressed presentation (10.5281/zenodo.23264902) first. The check concerns
+        OpenAI's formal development of the source theorem, not these papers. Problems in the formalization
+        itself belong in OpenAI's repository, https://github.com/openai/math.
+  - type: dropdown
+    id: stage
+    attributes:
+      label: Stage
+      options:
+        - Environment setup (toolchain, unprivileged user, sandbox)
+        - lake update or lake exe cache get
+        - Comparator run
+        - lake build or #print axioms
+        - Sandbox test
+        - Reading the shipped logs (ugc-lean-ugt-check.log, ugc_out.zip)
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: command
+    attributes:
+      label: Exact command or script invocation
+      render: shell
+    validations:
+      required: true
+  - type: textarea
+    id: discrepancy
+    attributes:
+      label: Question or discrepancy (your output next to the shipped log)
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      placeholder: Ubuntu 24.04 x86-64, 4 cores, Lean 4.34.1, openai/math revision fd4aeeb
+    validations:
+      required: true
+  - type: checkboxes
+    id: disclosure
+    attributes:
+      label: Security check
+      options:
+        - label: I have not included credentials, private paths, or non-public material.
+          required: true

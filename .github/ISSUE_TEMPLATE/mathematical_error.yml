@@ -1,0 +1,58 @@
+name: Mathematical error
+description: Report an error or a gap in a proof, with its location and a counterexample or the missing step.
+title: "[Math]: "
+labels: [mathematics]
+body:
+  - type: markdown
+    attributes:
+      value: >-
+        Thank you for reading carefully. No human expert has reviewed these papers yet, so reports like this
+        are the most useful contribution. The companion note and the compressed presentation's Attribution
+        section list every departure from OpenAI's source proof.
+  - type: dropdown
+    id: paper
+    attributes:
+      label: Paper
+      options:
+        - "The Unique Games Theorem: A Short Self-Contained Proof (10.5281/zenodo.23265572)"
+        - "Companion note to the short proof (10.5281/zenodo.23265572)"
+        - "A Compressed Presentation of OpenAI's Proof of the Unique Games Theorem (10.5281/zenodo.23264902)"
+    validations:
+      required: true
+  - type: input
+    id: location
+    attributes:
+      label: Location (section, theorem, lemma or equation; page and line where possible)
+      placeholder: Section 4.2, proof of Lemma 3, equation (12), page 7
+    validations:
+      required: true
+  - type: textarea
+    id: claim
+    attributes:
+      label: The claim, quoted or restated as the paper writes it
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: Counterexample or gap
+      description: A counterexample, or the step that does not follow and why. For a gap, say what would close it.
+    validations:
+      required: true
+  - type: dropdown
+    id: origin
+    attributes:
+      label: Origin of the step
+      options:
+        - Inherited from OpenAI's source proof
+        - One of the departures listed in the companion note or under Attribution
+        - Not sure
+    validations:
+      required: true
+  - type: checkboxes
+    id: disclosure
+    attributes:
+      label: Security check
+      options:
+        - label: I have not included credentials, private paths, or non-public material.
+          required: true

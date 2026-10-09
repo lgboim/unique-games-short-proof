@@ -1,0 +1,55 @@
+{
+  "@context": "https://w3id.org/codemeta/3.0",
+  "@type": "SoftwareSourceCode",
+  "name": "The Unique Games Theorem: a short self-contained proof and a compressed presentation of OpenAI's proof (papers, LaTeX sources and Lean check logs)",
+  "alternateName": "unique-games-short-proof",
+  "description": "Two expository preprints on OpenAI's proof of the Unique Games Theorem (23 September 2026), with their standalone LaTeX sources, and the script and logs of a Comparator check of OpenAI's Lean 4 formalization of the source theorem. The short proof is self-contained apart from three earlier theorems stated as inputs and simplifies several steps of the source; the compressed presentation follows the source closely. Both were prepared with AI models and checked by separate AI reviewers; no human expert has reviewed them. The Lean check concerns OpenAI's formal development, not these papers.",
+  "codeRepository": "https://github.com/lgboim/unique-games-short-proof",
+  "issueTracker": "https://github.com/lgboim/unique-games-short-proof/issues",
+  "version": "1.0.0",
+  "datePublished": "2026-10-09",
+  "author": {
+    "@type": "Person",
+    "givenName": "Ariel",
+    "familyName": "Elboim",
+    "@id": "https://orcid.org/0009-0001-1341-366X",
+    "affiliation": {
+      "@type": "Organization",
+      "name": "Independent researcher"
+    }
+  },
+  "identifier": [
+    "https://doi.org/10.5281/zenodo.23265572",
+    "https://doi.org/10.5281/zenodo.23264902"
+  ],
+  "sameAs": [
+    "https://zenodo.org/records/23265572",
+    "https://zenodo.org/records/23264902"
+  ],
+  "citation": [
+    "https://doi.org/10.5281/zenodo.23265572",
+    "https://doi.org/10.5281/zenodo.23264902"
+  ],
+  "isBasedOn": "https://github.com/openai/math/blob/main/preprints/The-Unique-Games-Theorem-September-23-2026/paper.pdf",
+  "license": [
+    "https://spdx.org/licenses/CC-BY-4.0.html",
+    "https://spdx.org/licenses/MIT.html"
+  ],
+  "programmingLanguage": [
+    "LaTeX",
+    "Python"
+  ],
+  "runtimePlatform": "Tectonic for the LaTeX sources; Python 3 for verify_manifest.py; Linux x86-64 for lean_check/ugc_lean_check.py",
+  "keywords": [
+    "Unique Games Conjecture",
+    "Unique Games Theorem",
+    "hardness of approximation",
+    "PCP",
+    "Grassmann graph",
+    "parallel repetition",
+    "noise gadget",
+    "complexity theory",
+    "exposition",
+    "Lean 4"
+  ]
+}
