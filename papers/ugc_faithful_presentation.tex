@@ -1,0 +1,1379 @@
+\documentclass[11pt]{article}
+\usepackage[a4paper,margin=26mm]{geometry}
+\usepackage{amsmath,amssymb,amsthm,mathtools}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern,microtype}
+\usepackage[colorlinks=true,linkcolor=blue,urlcolor=blue,citecolor=blue]{hyperref}
+\usepackage{enumitem,booktabs,array}
+\setlist{itemsep=3pt,topsep=5pt}
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newcommand{\E}{\mathbb E}
+\newcommand{\Prb}{\mathbb P}
+\newcommand{\F}{\mathbb F}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\rank}{\operatorname{rank}}
+\newcommand{\Hom}{\operatorname{Hom}}
+\newcommand{\Tr}{\operatorname{Tr}}
+\newcommand{\Span}{\operatorname{span}}
+\newcommand{\val}{\operatorname{val}}
+\newcommand{\OPT}{\operatorname{OPT}}
+\newcommand{\ind}{\mathbf 1}
+\title{A Compressed Presentation of OpenAI's Proof\\ of the Unique Games Theorem}
+\author{Ariel Elboim\\\small Independent researcher, ORCID 0009-0001-1341-366X\\\small Prepared with Codex (OpenAI) and Claude (Anthropic)}
+\date{9 October 2026}
+\newcommand{\depositdoi}{10.5281/zenodo.23264902}
+\begin{document}
+\maketitle
+\begin{abstract}
+We reconstruct the main argument of OpenAI's preprint \emph{The Unique
+Games Theorem} \cite{UGT}. Three earlier theorems are stated as inputs.
+The remaining argument constructs stable nonlinear noise, extracts
+constant-output certificates, decodes them using only local information,
+and contradicts parallel repetition on clean coordinates. We retain the
+conditioning and parameter order on which these steps depend. The aim is
+a short, continuous proof for a reader comfortable with finite-field
+linear algebra and Fourier analysis on finite groups who has not read the
+preprint. We modify the root construction of the noise gadget, simplify
+certificate extraction, and rewrite the genericity proof; these changes
+are identified and proved explicitly, and are listed, with smaller ones,
+under Attribution.
+\end{abstract}
+
+\noindent\textbf{Status.}
+This is an explanatory reconstruction. Its mathematical content
+received source-based reviews by AI agents (separate Claude instances and
+Codex); Codex had also helped write an earlier version. These reviews do
+not certify the preprint or constitute formal verification of this note,
+and no human expert has reviewed it. OpenAI's repository also contains a
+Lean~4 formalization of the source theorem, whose Comparator check
+passed when we ran it; that check concerns OpenAI's formal development,
+not this note or its changes (Appendix~\ref{app:lean}). This note is not
+derived from the formalization. Fortnow's earlier exposition
+\cite{Fortnow} presents the same proof at greater length; this note was
+prepared independently of it. A shorter proof, which simplifies several
+of the steps presented here, is given in \cite{ShortProof}. The theorem below is the preprint's claim,
+whose proof argument we present. The root step, Lemma~\ref{lem:root},
+has no counterpart in the source; it and our other departures from the
+source are listed under Attribution, at the end of
+Section~\ref{sec:finish}.
+
+\section{The claim and three prior inputs}
+
+A unique game labels vertices from a finite alphabet. Each edge carries
+a permutation: a label at one endpoint specifies exactly one acceptable
+label at the other. Its value is the largest fraction of constraints
+satisfied by one labeling.
+
+\begin{theorem}[Main claim of \cite{UGT}]\label{thm:main}
+For every fixed $0<\eps,\delta<1/2$, there is a deterministic polynomial-time
+reduction from satisfiability to explicit unweighted unique games on
+simple bipartite graphs that maps satisfiable formulas to YES games and
+unsatisfiable formulas to NO games, where
+\[
+ \mathrm{YES}:\val(G)\ge1-\eps,
+ \qquad \mathrm{NO}:\val(G)\le\delta.
+\]
+The alphabet is a fixed binary vector space, and every constraint is a
+translation. The alphabet and the degree of the running-time polynomial may depend
+on the two target errors, but not on the input length.
+\end{theorem}
+
+All spaces and linear maps below are over $\F_2$, except where a larger
+finite field is specified. Uniform samples include zero. Separately
+specified random choices are independent unless stated otherwise.
+Intermediate games may have rational weights and repeated constraint
+occurrences.
+
+\paragraph{Input 1: the parity gap.}
+For every fixed positive rational $\xi$, H\aa stad's theorem
+\cite[Theorem 5.4 and its proof]{Hastad} gives a deterministic
+polynomial-time reduction from satisfiability to weighted three-bit equations
+\[
+ x_{v_1}+x_{v_2}+x_{v_3}=b_e,
+ \qquad \mathrm{YES}:\OPT\ge1-\xi,
+ \qquad \mathrm{NO}:\OPT\le\tfrac12+\xi.
+\]
+The rational weights have polynomial encoding length.
+
+\paragraph{Input 2: Grassmann expansion.}
+The binary Grassmann graph has the $\ell$-dimensional subspaces of an
+ambient space as vertices; adjacency means an intersection of dimension
+$\ell-1$. The retention of a nonempty set is the probability that a uniform
+neighbor of a uniform member stays in the set. For every fixed retention
+threshold $\zeta>0$, there are $\alpha>0$ and an integer $r_{\rm s}\ge1$, depending
+only on $\zeta$, such that every set with retention at least $\zeta$ has
+relative density at least $\alpha$ in an interval
+\[
+ \{L:A_0\subseteq L\subseteq B_0\},
+ \qquad \dim A_0+\operatorname{codim}B_0\le r_{\rm s}.
+\]
+This holds for every sufficiently large $\ell$, and then every sufficiently
+large ambient dimension. This is the expansion theorem of
+Khot--Minzer--Safra \cite[Theorem 1.12]{KMS}.
+
+\paragraph{Input 3: projection-game repetition.}
+In a projection game, an answer of the first player determines one required
+answer of the second. Dinur--Steurer \cite[Corollary 1.2]{DS} give
+\begin{equation}\label{eq:repetition}
+ \val(G)\le1-g\quad\Longrightarrow\quad
+ \val(G^{\otimes n})\le(1-g^2/16)^n.
+\end{equation}
+This applies to finite weighted games and independent constraint samples.
+Each player may use its entire question tuple. The bound does not depend
+on the alphabet. Our games have a fixed projection for each question pair;
+repeated samples of the same constraint simply contribute their weights.
+
+\paragraph{Idea and plan.}
+The honest labeling applies one nonlinear map $C$, and the test perturbs
+its input by a special noise. The noise rarely changes the output of $C$,
+yet every linear family that sees enough of the output notices it with
+constant probability. Section~\ref{latent:section} builds such noise by a
+race inside a recursive construction. At each level an output change
+survives with probability $1-\theta$, so after $s$ levels it survives with
+probability about $e^{-\theta s}$. A generic family of linear observations
+of rank $r$ loses at most one dimension per level, and does so with
+probability at most $3r\theta$. Like a coupon collector, it therefore needs
+at least about $H_r/(3\theta)$ levels to die, where
+$H_r=1+\frac12+\dots+\frac1r$. The harmonic numbers diverge, so a large
+initial rank wins; the proof takes $s\approx H_{r_0}/(8\theta)$. The algebra
+needed is that, for a generic family, at most $3r$ of the $\theta^{-1}$ field
+lines are bad, each costing at most one dimension. A bad-line bound such as
+$2^r$ would make the corresponding sum converge, and this argument would
+fail. Stability gives completeness
+(Section~\ref{sec:tables}). Conversely, detection and Input~2 turn a labeling
+that passes the test into constant-output certificates, and these give two
+local decoders with constant agreement (Section~\ref{sec:decoders}). In a NO
+instance, clean coordinates embed the repeated base game, and
+\eqref{eq:repetition} makes such agreement impossible
+(Section~\ref{sec:clean}). Section~\ref{sec:finish} removes weights and
+amplifies the gap.
+
+\paragraph{Proof map.}
+Four statements carry the argument; the notation is defined in
+Sections~2--5.
+\begin{enumerate}[label=(\roman*)]
+\item \emph{Gadget:} the contract \eqref{eq:gadget-contract}, with $r_*$
+ depending only on $p_*$ (Section~\ref{latent:section}, Lemma~\ref{lem:root}).
+\item \emph{Completeness:} \eqref{eq:completeness}.
+\item \emph{Extraction:} for all cubes $k$ beyond a threshold, any labeling
+ that passes the test with probability at least $99/100$ yields two local
+ strategies with legal answers that agree with probability at least a
+ constant $\gamma>0$ (Proposition~\ref{prop:extraction}).
+\item \emph{Clean coordinates:} if $\OPT(\mathcal E)\le4/5$, as in a NO
+ instance with $\xi<1/100$, every pair of local
+ strategies with legal answers in the same experiment agrees with
+ probability at most $\exp[-2^{-\dim W-r_{\rm s}}k^{1/3}/3600]$
+ (Proposition~\ref{prop:clean}).
+\end{enumerate}
+The threshold, $\gamma$, $\dim W$ and $r_{\rm s}$ are fixed before $k$ and do not
+depend on the instance or the labeling; this matters because the parity
+error, and hence the instance, is chosen after $k$. So (iii) and (iv) give
+the NO side of the gap \eqref{eq:intermediate-gap}, and (ii) gives its YES
+side. Section~\ref{sec:finish} turns the gap
+into Theorem~\ref{thm:main}.
+
+\section{From parity equations to shared tables}\label{sec:tables}
+
+\paragraph{Distinct variables in each equation.}
+Let $\mathcal E_0$ be the system given by Input~1. Replace every variable by
+$100$ clones. In each equation, enumerate uniform
+clone choices conditioned on repeated occurrences of one variable using
+distinct clones. Split the original weight among these choices. Copying
+a global assignment to all clones preserves completeness.
+
+For an arbitrary clone assignment put $t_v=\E_c(-1)^{x_{v,c}}$. Before
+conditioning, the equation's satisfaction probability is
+\[
+ \frac{1+(-1)^{b_e}t_{v_1}t_{v_2}t_{v_3}}2.
+\]
+Round each variable by the sign of its bias, breaking zero ties arbitrarily.
+An equation violated after rounding has satisfaction probability at most
+$1/2$ before conditioning; any other equation has probability at most one.
+The probability of a forbidden clone collision is at most $3/100$.
+Conditioning away an event of probability $p$ changes the expectation of
+a $[0,1]$-valued variable by at most $p$. Write $\mathcal E$ for the
+processed system and $\omega_e$ for its weights. Then
+$\OPT(\mathcal E)\ge\OPT(\mathcal E_0)$ and
+\[
+ \OPT(\mathcal E)\le\frac{1+\OPT(\mathcal E_0)}2+\frac3{100},
+\]
+so in the NO case, for $\xi<1/100$, $\OPT(\mathcal E)\le4/5$.
+
+In its equation--variable game, the first player receives an equation and
+returns a satisfying triple. The second receives a uniformly chosen one
+of its three variables and returns a bit. The second player's answers form
+a global assignment. On an equation this assignment violates, every legal
+triple disagrees with it in at least one position. Hence in the NO case
+\begin{equation}\label{eq:base-gap}
+ \val(G_{\mathcal E})\le1-\frac{1-\OPT(\mathcal E)}3\le14/15.
+\end{equation}
+Distinct variables ensure that an equation--variable question pair specifies
+a unique position.
+
+\paragraph{The noise gadget needed below.}
+Section~\ref{latent:section} constructs, for each $p_*>0$, a threshold $r_*$
+such that for every sufficiently large $\ell$ divisible by $3$ there are
+finite data
+\begin{equation}\label{eq:gadget-contract}
+ \begin{gathered}
+ K=\F_2^\ell\le\mathcal V,\quad C:\mathcal V\to K,\quad a\sim\mu,\\
+ C(x+h)=C(x)+h\quad(h\in K),\qquad
+ \Pr_{x\text{ uniform},a}[C(x+a)\ne C(x)]\le p_*,\\
+ G\le\mathcal V^*,\ \dim(G|_K)\ge r_*
+ \quad\Longrightarrow\quad
+ \Pr_a[\exists g\in G:g(a)\ne0]\ge1/8.
+ \end{gathered}
+\end{equation}
+The noise law is rational. Crucially, $r_*$ is chosen before $\ell$.
+Fix a linear splitting $\mathcal V=K\oplus W$.
+
+\paragraph{Questions and homogeneous answers.}
+Sample $U=(e_1,\ldots,e_k)$ independently with replacement. Put
+$L_U=\F_2^{1+2k}$, with coordinates $t_0,x_1,y_1,\ldots,x_k,y_k$.
+The triple for equation $e_i$ is
+\[
+ (x_i,y_i,b_{e_i}t_0+x_i+y_i).
+\]
+Vectors with $t_0=1$ are exactly the legal answers. Different positions
+retain separate answer coordinates, even when their variable identifiers
+repeat. A projected question $O$ retains either an equation or one of its
+actual bits in each position; a singleton position records only the
+variable's identifier, not the equation or the slot it came from. This gives a surjective linear map
+$\pi:L_U\to L_O$ preserving $t_0$.
+
+\paragraph{Table keys force sharing.}
+A table is a linear map $P:L_Q\to\mathcal V$, or an affine map on the
+legal answers. In each position a table depends on the whole equation, on
+one of its variables, or on nothing. Its key is the coarsest support
+pattern (positions, types and identifiers) through which it factors,
+together with the induced affine map.
+Concretely, reduce it to its support. Delete zero-slope blocks; retain
+an equation when its two slopes are independent. A nonzero rank-one block
+has slopes $(v,0),(0,v)$ or $(v,v)$ and retains the first, second or third
+variable, respectively. In the third case adjust the intercept, using the third bit
+$z_i=b_{e_i}t_0+x_i+y_i$:
+\[
+ v(x_i+y_i)=v z_i+b_{e_i}v t_0.
+\]
+For a singleton block, retain it exactly when its slope is nonzero.
+The key records positions, question types and identifiers, and the full
+reduced affine map, including its intercept. Pulling a projected table
+back to $U$ and reducing again gives the same key: the third-bit intercept
+correction occurs twice and cancels. Such keys therefore already occur
+among tables on equation tuples.
+
+Take vertices to be key orbits under addition of a constant from $K$.
+Choose the representative whose intercept has $K$-component zero. Restore
+a table's output by adding its removed constant to the vertex label.
+Every labeling then defines functions satisfying
+\begin{equation}\label{eq:fold-share}
+ F_Q(P+h e_0^\top)=F_Q(P)+h,\qquad
+ F_U(P'\pi)=F_O(P').
+\end{equation}
+Here $e_0^\top$ is the first-coordinate functional.
+
+\paragraph{The test and completeness.}
+Sample $U\sim\omega^{\otimes k}$, a uniform table $P$, noise $a\sim\mu$, and a uniform
+$l\in\F_2^m$, where $m=1+2k$. Require
+\begin{equation}\label{eq:matrix-test}
+ F_U(P)=F_U(P+a l^\top).
+\end{equation}
+Equality of restored outputs is a translation constraint on the two vertex
+labels. The sampling probabilities are its rational weights. Call this
+weighted translation game $\mathcal H$. Loops and repeated edges are allowed
+for now.
+
+Given a global assignment satisfying at least $1-\xi$ of the equations,
+answer each retained variable by its global bit, and each retained equation
+by the global first two bits and the required third bit. Label a key
+representative by evaluating its table on this answer and applying $C$.
+Equivariance makes restoration consistent. With probability at least
+$1-k\xi$, every equation in $U$ is satisfied. All support answers are then
+projections of one legal vector $z_U$. The compared values are
+\[
+ C(Pz_U),\qquad C(Pz_U+a(l^\top z_U)).
+\]
+Since $z_U\ne0$, the first argument is uniform and $l^\top z_U$ is an
+independent fair bit. Consequently
+\begin{equation}\label{eq:completeness}
+ \val(\mathcal H)\ge1-k\xi-p_*/2.
+\end{equation}
+
+\paragraph{Why a gadget is needed.}
+Without one, take $\mathcal V=K$, $C=\mathrm{id}$ and $a$ uniform on $K$.
+For a legal answer $z$, nonzero since $t_0=1$, the evaluation labeling
+$F(P)=Pz$ is folded and passes \eqref{eq:matrix-test} exactly when
+$a(l^\top z)=0$. As $l^\top z$ is a fair bit independent of $a$, it
+accepts with probability exactly $\frac12+\frac1{2|K|}$. The gadget's
+nonlinear $C$ absorbs the noise, so acceptance approaches one by
+\eqref{eq:completeness}, while every linear family of large restriction
+rank still detects it. Soundness exploits this detection through
+Lemma~\ref{lem:noise-comparison}.
+
+\section{The latent noise gadget}
+\label{latent:section}
+
+We prove the contract \eqref{eq:gadget-contract}: for every $p_*>0$ we
+construct a threshold $r_*$, and then, for every sufficiently large $\ell$
+divisible by $3$, finite data
+$K\le\mathcal V$, $C$ and a rational law $\mu$. Here $x$ is uniform on
+$\mathcal V$, $a$ has
+law $\mu$, and the two are independent. All vector spaces and linear maps
+in this section are over $\F_2$ unless another field is specified.
+
+\subsection{One quadratic block}
+
+Take $F=\F_q$, where $q=2^d$, and put $X=B_{\rm blk}=F^3$ and $d_{\rm blk}=3d$.
+Identify their binary duals with $F^3$ using the nondegenerate pairing
+$\Tr(u\cdot v)$, where $\Tr:F\to\F_2$ is the field trace. Define
+\[
+ Q(x)=(x_2x_3,x_1x_3,x_1x_2),\qquad
+ D(x,a)=Q(x+a)+Q(x)+Q(a),\qquad
+ C_{\rm blk}(x,y)=y+Q(x).
+\]
+For each one-dimensional $F$-subspace $A=Fv$ of $F^3$, let
+\[
+ D_A=\{w:v\cdot w=0\},\qquad
+ U_A=\{(a,Q(a)+w):a\in A,\ w\in D_A\}.
+\]
+Expanding one coordinate, $(x_2+a_2)(x_3+a_3)+x_2x_3+a_2a_3=x_2a_3+x_3a_2$,
+shows, by symmetry, that $D(x,a)=x\times a$ is the cross product; signs do not matter in
+characteristic two. Hence
+\[
+ v\cdot D(x,tv)=t\,v\cdot(x\times v)=0,\qquad D(tv,t'v)=tt'\,v\times v=0.
+\]
+The second identity says that $Q|_A$ is additive, so $U_A$ is a binary subspace of dimension $d_{\rm blk}$.
+The trace annihilator of $D_A$ is $A$: containment holds, and both have
+binary dimension $d$. The spaces $U_A$ together span $X\oplus B_{\rm blk}$.
+Indeed, the coordinate lines supply all horizontal vectors, since $Q$
+vanishes there, and their vertical planes span $B_{\rm blk}$.
+
+The cancellation identity is
+\[
+ C_{\rm blk}((x,y)+(a,Q(a)+w))+C_{\rm blk}(x,y)
+ =w+D(x,a)\in D_A.
+\]
+For a uniform update from $U_A$, this difference is uniform on $D_A$,
+even with the input and $a$ fixed. There are $q^2+q+1$ field lines.
+Set $\theta=(q^2+q+1)^{-1}$. Removing the zero update, which has
+probability $q^{-3}$ and never changes the output, gives
+\begin{equation}
+ \Pr[\text{output changes under a uniform nonzero update in }U_A]
+ =\frac{1-q^{-2}}{1-q^{-3}}=1-\theta.
+ \label{latent:block-error}
+\end{equation}
+
+Now fix a binary subspace $S\le B_{\rm blk}^*$ and a linear extension
+$z\mapsto(\gamma_z,z)\in X^*\oplus B_{\rm blk}^*$, before choosing $A$.
+Write $\gamma_z(x)=\Tr(g(z)\cdot x)$, where $g:S\to F^3$ is binary-linear.
+For $z\ne0$,
+\begin{equation}
+ (\gamma_z,z)|_{U_A}=0
+ \quad\Longleftrightarrow\quad
+ A=Fz\ \text{ and }\ z\cdot g(z)=\sqrt{z_1z_2z_3}.
+ \label{latent:kernel}
+\end{equation}
+The vertical updates first force $z\in A$. The remaining condition is
+\[
+ \Tr\bigl(t\,g(z)\cdot z+t^2z_1z_2z_3\bigr)=0
+ \quad\text{for every }t\in F.
+\]
+Since $\Tr(t^2c)=\Tr(t\sqrt c)$, nondegeneracy of the trace proves
+\eqref{latent:kernel}. Square roots here are unique because squaring
+is an automorphism of a finite field of characteristic two.
+
+\subsection{Generic spaces work for every extension}
+
+Call an $r$-dimensional binary subspace $S\le F^3$ \emph{generic} if no
+two distinct nonzero elements are $F$-proportional and, for every
+binary-linear $g:S\to F^3$, the alignment equation in
+\eqref{latent:kernel} has at most $3r$ nonzero solutions.
+For each fixed $r$, a uniform $r$-dimensional subspace is generic with
+probability tending to one as $q$ tends to infinity. We prove this
+uniform statement, including its quantification over all $g$.
+
+Use independent uniform parameters $y_{ij}\in F$, and write
+\[
+ z_i(t)=\sum_{j=1}^r y_{ij}^2t_j,\qquad
+ c_t=\prod_{i=1}^3\left(\sum_{j=1}^r y_{ij}t_j\right),
+ \qquad t\in\F_2^r.
+\]
+Thus $c_t=\sqrt{z_1(t)z_2(t)z_3(t)}$. Squaring preserves uniformity.
+The map $t\mapsto z(t)$ fails to be injective with probability at most
+$(2^r-1)/q^3$; conditional on injectivity its image is a uniform
+$r$-space. Two distinct nonzero binary masks are linearly independent
+over $F$, so their images are independent uniform vectors. Their
+probability of being nonzero and proportional is $O(q^{-2})$.
+A finite union over pairs proves the first genericity condition.
+
+Fix a set $E\subseteq\F_2^r\setminus\{0\}$ with $|E|>3r$, and form
+\[
+ M_{t,(i,j)}=t_jz_i(t)\qquad(t\in E,\ 1\le i\le3,\ 1\le j\le r).
+\]
+An extension aligning at all masks in $E$ exists exactly when
+$c\in\operatorname{col}(M)$: the unknowns are the three coordinates of
+the $r$ values defining $g$. This single system handles every observer.
+
+First regard the parameters as indeterminates, and put
+\[
+ \mathbb L_0=\F_2(y_{ij}^2)\subset \mathbb L_1=\F_2(y_{ij}).
+\]
+
+\begin{lemma}[A cubic outside a quadratic span]\label{lem:cubic}
+If $E\subseteq\F_2^r\setminus\{0\}$ and $|E|>3r$, then $c$ is not in the
+column space of $M$, even over an
+algebraic closure of $\mathbb L_1$.
+\end{lemma}
+
+\begin{proof}
+The squarefree monomials in all the variables $y_{ij}$ form a basis of
+$\mathbb L_1$ over $\mathbb L_0$. In particular, the monomials
+$y_{1j}y_{2k}y_{3l}$ are linearly independent over $\mathbb L_0$.
+To see this, clear denominators. Coefficients then have only even
+exponents, whereas these monomials have distinct exponent-parity
+patterns, so cancellation is impossible. The choice of the smaller
+coefficient field is essential.
+
+Suppose that $c$ belongs to the column space of $M$ over such a closure.
+Every row annihilator of $M$ with entries in
+$\mathbb L_0$ then annihilates $c$. Independence of the preceding monomials
+forces it to annihilate each vector $(t_jt_kt_l)_{t\in E}$ separately.
+By the annihilator characterization of a column space, all these
+vectors belong to $\operatorname{col}_{\mathbb L_0}(M)$.
+Let $V_j$ be the $\mathbb L_0$-span of evaluations on $E$ of positive-degree
+monomials of degree at most $j$. Repeated indices cover degrees one
+and two, giving
+\[
+ V_3\subseteq\operatorname{col}_{\mathbb L_0}(M)\subseteq V_2\subseteq V_3.
+\]
+Multiplication by any input coordinate takes $V_2$ into $V_3$, so it
+preserves this common space. The space therefore contains every
+positive-degree monomial. It contains the indicator of each point of
+$E$: the usual Boolean point-indicator polynomial has a positive
+coordinate factor because the point is nonzero. Consequently the
+column space has dimension $|E|>3r$, a contradiction.
+\end{proof}
+
+\noindent Now specialize.
+Let $\varrho_M$ be the formal rank of $M$. There is a nonzero augmented
+$(\varrho_M+1)$-minor of $[M\mid c]$, whereas every unaugmented minor of that
+size vanishes identically. Its polynomial degree is at most
+$2\varrho_M+3\le6r+3$. Thus any specialization admitting an alignment on $E$
+zeros this polynomial, including specializations where the rank drops.
+A nonzero polynomial vanishes at independent uniform field elements
+with probability at most its total degree divided by $q$: induct on the
+number of variables, using the leading coefficient and the
+one-variable root bound. Union over sets $E$ of size $3r+1$ now
+finishes the proof. Their number depends only on $r$; if no such sets
+exist the condition is automatic. Conditioning on injectivity costs a
+factor tending to one.
+
+Here is the rank estimate we will use. Put $H_0=0$ and
+$H_r=\sum_{i=1}^r1/i$, and let
+\[
+ r_A=\dim\operatorname{im}\bigl[z\mapsto(\gamma_z,z)|_{U_A}\bigr],
+ \qquad r=\dim S.
+\]
+For generic $S$, \eqref{latent:kernel} gives
+\begin{equation}
+ r-r_A\le1,\qquad
+ \Pr_A[r_A<r]\le3r\theta,\qquad
+ \E_A(H_r-H_{r_A})\le3\theta.
+ \label{latent:good-loss}
+\end{equation}
+The first bound uses the absence of proportional pairs. For arbitrary
+$S$ we still have
+\begin{equation}
+ \Pr_A[r_A<r]\le2^r\theta,\qquad H_r-H_{r_A}\le H_r.
+ \label{latent:arbitrary-loss}
+\end{equation}
+
+\subsection{Recursion reduces the nonlinear error}
+
+Construct spaces $R_t\le P_t$, surjections $\lambda_t:R_t\to B_{\rm blk}$, and
+maps $C_t:P_t\to B_{\rm blk}$ satisfying
+\begin{equation}
+ C_t(u+h)=C_t(u)+\lambda_t(h)\qquad(h\in R_t).
+ \label{latent:recursive-symmetry}
+\end{equation}
+At height zero all spaces are $B_{\rm blk}$ and both maps are the identity.
+At each subsequent height use one child for each pair in
+\[
+ \mathcal I=\{(A,J):J:B_{\rm blk}\xrightarrow{\sim}U_A\},
+ \qquad
+ P_t=\prod_{\mathcal I}P_{t-1},
+ \qquad
+ C_t(u)=C_{\rm blk}\left(\sum_{(A,J)}J C_{t-1}(u_{A,J})\right).
+\]
+All isomorphisms here are binary. On the product of child translation
+spaces define the surjections
+\[
+ L(h)=(\lambda_{t-1}(h_i))_i,\qquad
+ \mathcal A((b_i)_i)=\sum_iJ_i b_i
+   =(\mathcal A_X((b_i)_i),\mathcal A_B((b_i)_i)).
+\]
+The second map is onto because the update spaces span $X\oplus B_{\rm blk}$.
+Set
+\[
+ R_t=\ker(\mathcal A_XL),\qquad
+ \lambda_t=(\mathcal A_BL)|_{R_t}.
+\]
+This last map is onto. Such translations change only the vertical
+input of the block, proving \eqref{latent:recursive-symmetry}.
+In particular, a uniform input has uniform output.
+
+The noise chooses a uniform child at every level and adds an independent
+uniform element of $B_{\rm blk}$ at the selected leaf. Each line has the same
+number of isomorphisms, so a uniform child can be exposed as a uniform
+line followed by a fresh uniform isomorphism.
+
+We need uniformity even after conditioning on a child's output change.
+For any fixed child perturbation $a$, write
+$\Delta_a(u)=C_{t-1}(u+a)+C_{t-1}(u)$. Then
+\[
+ (\Delta_a,C_{t-1})(u+h)
+ =(\Delta_a(u),C_{t-1}(u)+\lambda_{t-1}(h)).
+\]
+Translation preserves the uniform input law. Surjectivity of
+$\lambda_{t-1}$ therefore makes the child output uniform conditional
+on $\Delta_a$ and $a$. The other child outputs remain independent and
+uniform. Since $\mathcal A$ is onto, the block input is uniform
+conditional on the chosen child and its change.
+
+All children are identical copies, so the law of that change is
+independent of the chosen child index. Given a nonzero change and the
+chosen line, the fresh uniform $J$ sends the change to a uniform
+nonzero element of $U_A$. Equation \eqref{latent:block-error} thus
+gives the exact recursion
+\begin{equation}
+ p_0=1-q^{-3},\qquad p_t=(1-q^{-3})(1-\theta)^t,
+ \label{latent:recursive-error}
+\end{equation}
+where $p_t$ is the probability that $C_t$ changes under its noise.
+
+\subsection{Linear rank survives the adaptive path}
+\label{latent:rank}
+
+A lift of $S\le B_{\rm blk}^*$ is a linear map $z\mapsto\psi_z\in P_t^*$ with
+$\psi_z|_{R_t}=z\lambda_t$. We show that a lift determines a single
+extension at the current block, before a child is chosen.
+Restrict $\psi_z$ to $\prod_{\mathcal I}R_{t-1}$. It vanishes on
+$\ker L$, hence descends to a functional $\chi_z$ on
+$\prod_{\mathcal I}B_{\rm blk}$. The functional $\chi_z-z\mathcal A_B$ vanishes
+on $\ker\mathcal A_X$. Since $\mathcal A_X$ is onto, there is a unique
+$\gamma_z\in X^*$ such that
+\begin{equation}
+ \chi_z-z\mathcal A_B=\gamma_z\mathcal A_X,\qquad
+ \phi_{A,J}(z)=J^*((\gamma_z,z)|_{U_A}).
+ \label{latent:common-extension}
+\end{equation}
+Uniqueness makes $\gamma_z$ linear in $z$, and common to all children.
+
+For $h\in R_{t-1}$ in child $(A,J)$ this gives
+$\psi_z(h)=\phi_{A,J}(z)(\lambda_{t-1}h)$. For a chosen child, let
+$S'=\operatorname{im}\phi_{A,J}$. Choose a linear section $\iota:S'\to S$ and restrict $\psi_{\iota(z')}$ to that
+child's input. This is a lift of $S'$. Repeat along the noise path,
+choosing sections by a fixed rule from the revealed data. If a
+continuing functional detects the leaf noise, its ancestor detects
+the original noise, because that noise is supported only in the
+selected child at every level.
+
+Choose $r_0\ge1$ and $0<\zeta_0<1$ with
+\[
+ H_{r_0}2^{r_0}\zeta_0\le1.
+\]
+Choose $q$ large enough that $d_{\rm blk}\ge r_0$ and that, at every rank from
+$1$ to $r_0$, the proportion of nongeneric subspaces is at most
+$\zeta_0$. Start from any generic $r_0$-dimensional space $S_0\le B_{\rm blk}^*$ together
+with a lift of it.
+
+Let $\mathcal F_j$ contain the full path history just before choosing
+the next line and isomorphism. The current space, lift, and common
+extension are $\mathcal F_j$-measurable. After the line $A_j$ is
+revealed, the next rank is already fixed:
+\[
+ \rho_{j+1}=\dim E_j,\qquad
+ E_j=\operatorname{im}[z\mapsto(\gamma_z,z)|_{U_{A_j}}].
+\]
+Only then expose $J_j$. The space $S_{j+1}=J_j^*E_j$ is uniform among
+subspaces of dimension $\rho_{j+1}$. Its lift may depend on $J_j$; this
+is harmless because genericity holds for every lift on a generic
+space.
+
+The rest is a probability statement, which we isolate.
+
+\begin{lemma}[The race]\label{lem:race}
+Let $\theta>0$, and let $r_0=\rho_0\ge\rho_1\ge\dots\ge0$ be integers with
+$r_0\ge1$ and $B_0,B_1,\ldots\in\{0,1\}$, all adapted to a filtration
+$(\mathcal F_j)$. Suppose that
+\[
+ \E B_j\le\zeta_0,\qquad
+ \E[H_{\rho_j}-H_{\rho_{j+1}}\mid\mathcal F_j]\le3\theta+H_{r_0}2^{r_0}\theta B_j,
+ \qquad H_{r_0}2^{r_0}\zeta_0\le1.
+\]
+Then $s=\lfloor H_{r_0}/(8\theta)\rfloor$ satisfies $\Pr[\rho_s>0]\ge\frac12$.
+\end{lemma}
+
+\begin{proof}
+Taking expectations, each step lowers $\E H_{\rho_j}$ by at most $4\theta$.
+So $\E H_{\rho_s}\ge H_{r_0}-4\theta s\ge H_{r_0}/2$, while
+$H_{\rho_s}\le H_{r_0}\ind_{\{\rho_s>0\}}$.
+\end{proof}
+
+\noindent The bound on $\E B_j$ is unconditional. The exceptional term is
+removed only after averaging over the history, not under conditioning on it.
+
+To apply the lemma, let $B_j$ indicate a positive-rank nongeneric current
+space. Then $B_0=0$ and $\E[B_{j+1}\mid\mathcal F_j,A_j]\le\zeta_0$,
+because $S_{j+1}$ is uniform of its dimension. The conditional loss bound
+follows from \eqref{latent:good-loss}--\eqref{latent:arbitrary-loss}.
+So $\rho_s>0$ with probability at least $1/2$.
+The uniform leaf symbol has not yet been exposed. A family of rank
+$\rho_s>0$ detects it with probability $1-2^{-\rho_s}\ge1/2$.
+Ancestor detection therefore shows that every lift of a generic
+$r_0$-dimensional space detects the noise with probability at least $1/4$.
+
+\subsection{A random root and one quotient}
+
+Fix a binary basis of $F^3$ and put $K=B_{\rm blk}=\F_2^{\ell}$. The
+following lemma completes the gadget; its random root automorphism plays
+the role of the fresh isomorphisms $J$ at every level.
+
+\begin{lemma}[Root step]\label{lem:root}
+Let $r_0$, $\zeta_0$, $d$ and $s$ be as in Section~\ref{latent:rank}, so
+that (i)~every lift on $P_s$ of a generic $r_0$-dimensional subspace of
+$B_{\rm blk}^*$ detects the depth-$s$ noise with probability at least
+$1/4$, and (ii)~a uniform $r_0$-dimensional subspace of $B_{\rm blk}^*$
+is generic with probability at least $1-\zeta_0\ge1/2$. Then, with output
+dimension $\ell=d_{\rm blk}=3d$, there are a finite binary space
+$\mathcal V$ containing $K$, a map $C:\mathcal V\to K$ and a rational law
+$\mu$ on $\mathcal V$ such that:
+(a)~$C(x+h)=C(x)+h$ for all $x\in\mathcal V$ and $h\in K$;
+(b)~for uniform $x$ and independent $a\sim\mu$,
+$\Pr[C(x+a)\ne C(x)]=p_s$, the nonlinear error of the depth-$s$
+construction; and
+(c)~every $G\le\mathcal V^*$ with $\dim(G|_K)\ge r_0$ satisfies
+$\Pr_{a\sim\mu}[\exists g\in G:g(a)\ne0]\ge1/8$.
+\end{lemma}
+
+\begin{proof}
+Here (i) is the conclusion of Section~\ref{latent:rank}; in (ii),
+$\zeta_0\le1/2$ because $H_{r_0}2^{r_0}\zeta_0\le1$ and $r_0\ge1$.
+Take one copy of the depth-$s$
+construction for every binary automorphism $\tau\in GL(B_{\rm blk})$:
+\[
+ P=\prod_{\tau}P_s,\qquad R=\prod_{\tau}R_s,\qquad
+ \widetilde C((u_\tau))=\sum_{\tau}\tau\,C_s(u_\tau),\qquad
+ \Lambda((h_\tau))=\sum_{\tau}\tau\,\lambda_s(h_\tau).
+\]
+By \eqref{latent:recursive-symmetry},
+$\widetilde C(u+h)=\widetilde C(u)+\Lambda(h)$ for $h\in R$, and
+$\Lambda:R\to K$ is onto because $\lambda_s$ and each $\tau$ are. Take the
+single quotient
+\[
+ \mathcal V=P/\ker\Lambda,\qquad R/\ker\Lambda\simeq K.
+\]
+Then $\widetilde C$ descends to $C:\mathcal V\to K$ with $C(x+h)=C(x)+h$
+for $h\in K$, and $K$ is an actual subspace of $\mathcal V$. The noise
+draws a uniform $\tau$ and, independently of $\tau$, a depth-$s$ noise
+sample $\xi_s\in P_s$; it places $\xi_s$ in copy $\tau$ and passes to the quotient. A uniform input
+on $P$ pushes forward to a uniform input on $\mathcal V$, since all cosets of
+$\ker\Lambda$ have the same size. Since $\tau$ is bijective, the output
+change event is preserved exactly, and its probability is still $p_s$.
+This proves (a) and (b); $\mu$ is rational, being a pushforward of
+uniform choices on finite sets.
+
+For (c), fix $G\le\mathcal V^*$ with $\dim(G|_K)\ge r_0$. It is fixed
+before the noise, and so before $\tau$. Put $S=G|_K$ and fix an
+$r_0$-dimensional subspace $T\le S$. Let $\varpi:P\to\mathcal V$ be the
+quotient map; on $R$ it is $\Lambda$ under the identification
+$R/\ker\Lambda\simeq K$. Thus for $g\in G$ and $h\in R_s$ in copy $\tau$,
+$g(\varpi\,\iota_\tau h)=(g|_K)\tau\lambda_s(h)$, where $\iota_\tau$
+includes factor $\tau$ into $P$. The map $g\mapsto(g|_K)\tau$ sends $G$
+onto $\tau^*S$, which contains $\tau^*T=\{z\tau:z\in T\}$. For uniform
+$\tau$, the space $\tau^*T$ is uniform among the $r_0$-dimensional
+subspaces of $B_{\rm blk}^*$, since $GL(B_{\rm blk})$ acts transitively
+on them. By (ii) it is generic with probability at least $1-\zeta_0$.
+
+Fix such a $\tau$ with $\tau^*T$ generic, and a linear section
+$\varsigma:\tau^*T\to G$ of $g\mapsto(g|_K)\tau$. The functionals
+$\psi_z=\varsigma(z)\circ\varpi\circ\iota_\tau$ satisfy
+$\psi_z|_{R_s}=z\lambda_s$, so they form a lift of $\tau^*T$. Since
+$a=\varpi\,\iota_\tau\xi_s$ with $\xi_s$ drawn independently of $\tau$, by
+(i) this lift detects $\xi_s$ with probability at least $1/4$. Each
+$\psi_z$ is the pullback of $\varsigma(z)\in G$, so
+$\psi_z(\xi_s)=\varsigma(z)(a)$, and $G$ then detects $a$. Averaging over $\tau$
+gives detection probability at least $(1-\zeta_0)/4\ge1/8$.
+\end{proof}
+
+\paragraph{Parameter order and finite data.}
+Choose $r_0$ large enough that $e^{1-H_{r_0}/8}\le p_*$; this is
+possible because the harmonic sums diverge. Set $r_*=r_0$ and choose
+$\zeta_0$. The field degree $d$ may then be any integer large enough that
+$3d\ge r_0$ and that, at every rank from $1$ to $r_0$, the proportion of
+nongeneric subspaces is at most $\zeta_0$. Finally set $\ell=d_{\rm blk}=3d$,
+$\theta$ and $s$:
+\[
+ p_*\ \longrightarrow\ r_0=r_*\ \longrightarrow\ \zeta_0\
+ \longrightarrow\ d\ \text{(any large enough)}\ \longrightarrow\ \ell=3d,\ \theta,\ s.
+\]
+Equation \eqref{latent:recursive-error} gives
+\[
+ p_s\le e^{-\theta s}\le e^{\theta-H_{r_0}/8}\le p_*.
+\]
+Lemma~\ref{lem:root} now gives the contract
+\eqref{eq:gadget-contract} with $r_*=r_0$, for every sufficiently large
+$\ell$ divisible by $3$.
+
+
+\section{From high acceptance to private decoders}\label{sec:decoders}
+
+Fix $p_*$ and its gadget threshold $r_*$. Set $\eta=2^{-r_*}/16$.
+Apply Input 2 at retention $\eta/4$ to obtain $\alpha,r_{\rm s}$. Choose
+$\ell$ divisible by $3$ and large enough for that input and the gadget, and so that
+\begin{equation}\label{eq:matrix-parameters}
+ 2^{-(\ell-r_{\rm s})}<\alpha/8,\qquad 2^{-\ell}<\eta/4.
+\end{equation}
+Now fix the gadget and splitting $\mathcal V=K\oplus W$. Only $k$ grows
+from now on. Write a table as $P=(M,T)$ with values in $K\oplus W$.
+
+Extraction concerns the following experiment.
+
+\paragraph{The precise experiment.}
+Sample $U\sim\omega^{\otimes k}$. Independently in each position, retain
+the equation with probability $1-\beta$, or a uniform one of its variables
+with probability $\beta=k^{-2/3}$. This gives $O$ and $\pi:L_U\to L_O$.
+Sample independent uniform maps
+\[
+ A:K\to\F_2^{r_{\rm s}},\qquad T_O:L_O\to W,\qquad M_O:L_O\to K,
+ \qquad S_O=AM_O.
+\]
+The messages are exactly
+\begin{equation}\label{eq:messages}
+ (U,A,T_O\pi,S_O\pi),\qquad (O,A,T_O,S_O).
+\end{equation}
+Neither player receives $M_O$ or $\pi$. Each may use the fixed function
+family and independent private randomness, but only its own message.
+
+\begin{proposition}[Extraction]\label{prop:extraction}
+There are $k_0$ and $\gamma>0$, depending only on the fixed auxiliary data,
+such that the following holds for every parity instance and every cube
+$k\ge k_0$. If a labeling of $\mathcal H$ passes \eqref{eq:matrix-test} with
+probability at least $99/100$, then there are such strategies, returning
+legal answers, with
+\begin{equation}\label{eq:agreement}
+ \Pr[\pi a_U=a_O]\ge\gamma.
+\end{equation}
+The strategies need not be efficient.
+\end{proposition}
+
+\noindent The rest of this section proves the proposition. Choose $k_0$
+so that every $k\ge k_0$, with $m=1+2k$, gives $2^{-m}\le\eta/4$, makes
+$\ell+m$ exceed Input~2's ambient-dimension threshold at retention
+$\eta/4$, and makes $v_k\le\gamma_1$ in \eqref{eq:tv} and
+\eqref{eq:gamma1} below; this is possible because $v_k\to0$ as
+$k\beta^2=k^{-1/3}\to0$.
+
+\subsection{Replacing the noise and extracting constant outputs}
+
+For a function on a finite binary space, put
+$\widehat f(\phi)=\E_x f(x)(-1)^{\phi(x)}$.
+A nonzero character averages to zero: translation by a point where it is
+one reverses its sign. Thus characters form an orthonormal basis, Fourier
+inversion holds, and Parseval gives
+$\sum_\phi|\widehat f(\phi)|^2=\E f^2$. Also
+\[
+ \ind_{u=v}=\E_{\sigma\in K^*}(-1)^{\sigma(u+v)}.
+\]
+For a noise law $\nu$ on $\mathcal V$ and a function $F$ from tables
+$L_U\to\mathcal V$ to $K$, let $\mathrm{acc}_\nu(F)=\Pr[F(P)=F(P+al^\top)]$,
+with $P$ and $l$ uniform and $a\sim\nu$. Let $\nu_K$ be uniform on $K$.
+
+\begin{lemma}[Noise comparison]\label{lem:noise-comparison}
+$\mathrm{acc}_{\nu_K}(F)\ge2^{-r_*}\bigl(8\,\mathrm{acc}_\mu(F)-7\bigr)$.
+\end{lemma}
+
+\begin{proof}
+Expand the equality indicator over $\sigma\in K^*$, and each
+$(-1)^{\sigma F}$ in characters $g=(g_1,\ldots,g_m)\in(\mathcal V^*)^m$ of
+the table space. Orthogonality over $P$ and averaging over $l$ give
+\[
+ \mathrm{acc}_\nu(F)=\E_\sigma\sum_g|\widehat{F_\sigma}(g)|^2\lambda_\nu(g),
+ \qquad
+ \lambda_\nu(g)=\Pr_{a\sim\nu}[g_i(a)=0\text{ for all }i]\ge0,
+\]
+and the squared coefficients sum to one for each $\sigma$. Call $g$ low when
+the restrictions $g_i|_K$ span dimension less than $r_*$, and let
+$m_{\rm low}$ be the average mass on low frequencies. For the others, the family
+$\Span\{g_i\}$ has restriction to $K$ of dimension at least $r_*$, and
+some element of it is nonzero at $a$ exactly when some $g_i$ is. So detection gives
+$\lambda_\mu\le7/8$. Hence
+\[
+ \mathrm{acc}_\mu\le m_{\rm low}+\tfrac78(1-m_{\rm low}),\qquad\text{that is,}\qquad
+ m_{\rm low}\ge8\,\mathrm{acc}_\mu-7.
+\]
+On the low frequencies
+$\lambda_{\nu_K}=2^{-\dim\Span(g_i|_K)}\ge2^{-r_*}$.
+\end{proof}
+
+The bound is linear, so it averages over $U$. Test acceptance $0.99$
+therefore gives average uniform-$K$ acceptance at least
+$0.92\cdot2^{-r_*}=14.72\eta$. This noise leaves $T$ fixed. Since
+acceptance at fixed $(U,T)$ lies in $[0,1]$, a fraction at least
+$(14.72\eta-4\eta)/(1-4\eta)>10\eta$ of these pairs satisfies
+\begin{equation}\label{eq:good-pair}
+ \Pr_{M,a\in K,l}[F_U(M,T)=F_U(M+a l^\top,T)]\ge4\eta.
+\end{equation}
+
+\paragraph{A constant-output slice.}
+The \emph{step retention} of a set of matrices is the probability that the
+uniform rank-one step $M\mapsto M+al^\top$, zero step included, keeps a
+uniform member inside it. For any function on matrices, its acceptance is
+the fiber-size-weighted average of the step retentions of its fibers.
+
+\begin{lemma}[Constant-output slice]\label{lem:slice}
+Let $\ell$, and then $\ell+m$, exceed the thresholds of Input~2 at retention
+$\eta/4$, and let $2^{-\ell},2^{-m}\le\eta/4$. Let $f$ be a function on
+$\Hom(\F_2^m,K)$ with values in an arbitrary set, and suppose that the fiber
+of a value $u$ has step retention at least $\eta$. Then there are a row
+map $A_*:K\to\F_2^{r_{\rm s}}$, a value $S_*$, and at most $r_{\rm s}$ column
+conditions $Mq_j=t_j$ that cut out a nonempty slice of the row fiber
+$A_*M=S_*$ on which $f=u$ with density at least $\alpha$.
+\end{lemma}
+
+\begin{proof}
+The step is zero with probability
+$p_{\rm zero}=2^{-\ell}+2^{-m}-2^{-\ell-m}\le\eta/2$ by hypothesis.
+Conditioning on nonzero factors leaves retention at least $\eta/2$.
+
+Identify $M$ with its graph
+\[
+ \Gamma_M=\{(x,M^\top x):x\in\F_2^\ell\},\qquad
+ \dim(\Gamma_M\cap \Gamma_N)=\ell-\rank(M-N).
+\]
+These form the matrix chart in the Grassmann graph on
+$\F_2^\ell\oplus\F_2^m$. A chart vertex has
+$(2^\ell-1)(2^m-1)$ chart neighbors and
+$(2^\ell-1)(2^{m+1}-2)$ neighbors in total. For the latter count, choose
+a hyperplane in the vertex and a different one-dimensional extension in
+the quotient. For the former, use the unique nonzero rank-one
+factorization over $\F_2$. Exactly half the neighbors are in the chart.
+The lifted fiber has Grassmann retention at least $\eta/4$.
+
+Input 2 gives relative density $\alpha$ in an interval. Intersecting it
+with the chart cannot lower density, since the entire fiber is already
+in the chart. A basis $(d_i,s_i)$ of $A_0$ and a basis $(t_j,q_j)$ of
+$B_0^\perp$, for the dot product on $\F_2^\ell\oplus\F_2^m$ under which
+$\Gamma_M^\perp=\{(Mv,v)\}$, express the interval's intersection with the
+chart as the
+nonempty slice
+\begin{equation}\label{eq:slice}
+ \{M:d_i^\top M=s_i^\top,\ Mq_j=t_j\},
+ \qquad i\le n_{\rm row},\ j\le n_c,\ n_{\rm row}+n_c\le r_{\rm s}.
+\end{equation}
+On at least an $\alpha$ fraction of it, $f$ equals $u$. Its row
+conditions say $A_*M=S_*$, where $A_*$ has the rows $d_i^\top$ padded with
+zeros, and there are at most $r_{\rm s}$ column conditions.
+\end{proof}
+
+The lemma needs no folding assumption, and values outside the fiber play
+no role. The constant output, rather than a general affine target, is all
+that is used below.
+
+\paragraph{Good row advice occurs often.}
+For fixed $(U,T)$ write $f(M)=F_U(M,T)$. Call a nonempty row fiber $AM=S$
+good if at most $r_{\rm s}$ column conditions cut out a nonempty slice of it
+on which one value of $f$ has density at least $\alpha$.
+
+\begin{lemma}[Good row advice is frequent]\label{lem:advice}
+Assume the dimension hypotheses of Lemma~\ref{lem:slice}. If $(U,T)$
+satisfies \eqref{eq:good-pair}, the union $\mathcal R$ of all good
+row fibers, over all choices of $A$ and $S$, has measure at least $\eta$.
+\end{lemma}
+
+\begin{proof}
+Suppose that $\mathcal R$ has measure less than $\eta$. Give each matrix in
+$\mathcal R$ its own new value outside $K$, and call the result $f'$.
+A rank-one step can lose a match only if an endpoint lies in $\mathcal R$.
+Both endpoints are uniform, so $f'$ has acceptance at least
+$4\eta-2\eta=2\eta$. Each new value has a one-point fiber, whose step
+retention is exactly $p_{\rm zero}\le\eta/2$. If every fiber of a value in $K$ had
+step retention below $\eta$, the averaging identity would give acceptance
+below $\eta+p_{\rm zero}<2\eta$. So some $u\in K$ has a fiber of step retention at
+least $\eta$ under $f'$. Lemma~\ref{lem:slice} gives a row fiber
+$A_*M=S_*$ and a slice of it, cut out by at most $r_{\rm s}$ column
+conditions, on which $f'=u$ with density at least $\alpha$. Wherever
+$f'=u$, also $f=u$. So that row fiber is good, and lies in $\mathcal R$.
+But on $\mathcal R$ the function $f'$ takes no value in $K$, a
+contradiction.
+\end{proof}
+
+For each matrix in $\mathcal R$, at least one of the $2^{\ell r_{\rm s}}$ possible row maps
+witnesses goodness. Averaging also over the good pairs gives, under a
+uniform full table and independent uniform $A$,
+\begin{equation}\label{eq:g0}
+ \Pr[(U,A,T,AM)\text{ is good row advice}]
+ \ge g_0:=10\eta^2 2^{-\ell r_{\rm s}}.
+\end{equation}
+Select a certificate deterministically from each good advice, using a
+fixed order and the function family. Put $Z=\Span\{q_j\}$. If every
+vector of $Z$ has first bit zero, translations $M\mapsto M+h e_0^\top$
+with $h\in\ker A$ preserve the slice and translate its output by $h$.
+Every value then has density at most
+$2^{-\dim\ker A}\le2^{-(\ell-r_{\rm s})}<\alpha/8$, a contradiction. Therefore
+\begin{equation}\label{eq:answer-list}
+ \mathcal A=Z\cap\{v:e_0^\top v=1\},\qquad 1\le|\mathcal A|\le2^{r_{\rm s}}.
+\end{equation}
+The first player samples uniformly from this list, and gives any legal
+answer on advice that is not good. This uses only its own message.
+
+\subsection{Transferring a positive expectation}
+
+Fix $U$. Let $\mathcal L_{\rm pad}$ be the law of the padded full table
+$(M_O\pi,T_O\pi)$, with its intercept, after averaging over the projection
+choices, and let $\mathcal L_{\rm unif}$ be the law of a uniform table on
+$L_U$.
+
+\begin{lemma}[Padded tables look uniform]\label{lem:tv}
+With $n=|\mathcal V|$, the total variation distance satisfies
+\begin{equation}\label{eq:tv}
+ v_k=\bigl\|\mathcal L_{\rm pad}-\mathcal L_{\rm unif}\bigr\|_{\rm TV}
+ \le\frac12\sqrt{\Bigl(1+\frac{n-1}{3}\beta^2\Bigr)^k-1}.
+\end{equation}
+The same bound holds jointly with an independent uniform $A$.
+\end{lemma}
+
+\begin{proof}
+Blocks are independent. A retained equation has uniform slopes. In a
+singleton block, the slope law $Q_0$ is the equally weighted mixture of
+$(a,0),(0,a),(a,a)$ for uniform $a\in\mathcal V$. Let $P_0$ be uniform on
+$\mathcal V^2$. The ratio $Q_0/P_0$ is $n$ at zero, $n/3$ at the $3(n-1)$
+other points of these three sets, and zero elsewhere, so
+$\chi^2(Q_0\Vert P_0):=\E_{P_0}(Q_0/P_0-1)^2=(n-1)/3$. Mixing with weight
+$\beta$ multiplies the centered ratio by $\beta$, and $1+\chi^2$ multiplies
+over independent blocks. Cauchy--Schwarz bounds total variation by half
+the square root of $\chi^2$. The intercept is covered too: an independent
+uniform intercept stays uniform after adding third-bit corrections that
+depend on the slopes.
+\end{proof}
+
+\noindent The lemma does \emph{not} compare joint laws that include $\pi$.
+Since $k\beta^2=k^{-1/3}$, the bound tends to zero.
+
+Under the unrestricted uniform law, let $J$ mean that row advice is good
+and the chosen column conditions hold; let $E$ mean that the output equals
+the chosen constant. The conditions impose at most $\ell r_{\rm s}$ extra scalar
+equations on a nonempty row fiber. Hence
+\[
+ \Pr(J)\ge g_0 2^{-\ell r_{\rm s}},\qquad
+ \E[\ind_J(\ind_E-\alpha/2)]\ge(\alpha g_0/2)2^{-\ell r_{\rm s}}.
+\]
+This score depends only on the full table, $U,A$, and the deterministic
+certificate selected from its row advice. Its range has length one, so
+\eqref{eq:tv} changes its expectation by at most $v_k\le\gamma_1$. Hence,
+in the projected experiment its expectation is at least
+\begin{equation}\label{eq:gamma1}
+ \gamma_1:=(\alpha g_0/4)2^{-\ell r_{\rm s}}>0.
+\end{equation}
+
+Only now condition on $D=(U,O,\pi,A,T_O,S_O)$. The first player's
+certificate is fixed, while $M_O$ is uniform on its row fiber. By sharing,
+the selected output equality is an equality for $F_O$. Let $p_D$ be the
+probability of its projected column slice and $\rho_D$ the constant-output
+density there; take them to be zero when no such slice exists. The
+conditional score is $p_D(\rho_D-\alpha/2)$. It is nonpositive unless the
+slice is nonempty and $\rho_D\ge\alpha/2$, and is always at most one.
+Consequently these useful data occur with probability at least $\gamma_1$.
+No witness has been sent to the second player.
+
+\subsection{A decoder that does not know the certificate}
+
+The second player answers with a general decoding rule. Let $H\le K$,
+$d_H=\dim H$ and $X=\Hom(L_O,H)$, and let $g:X\to K$ be folded:
+$g(N+he_0^\top)=g(N)+h$ for $h\in H$. Identify
+\[
+ X^*=H^*\otimes L_O,\quad
+ \langle\varphi\otimes v,N\rangle=\varphi(Nv),\quad
+ (\varphi\otimes v)(h')=\varphi(h')v.
+\]
+The decoder chooses $\sigma\in K^*$ uniformly, puts
+$f_\sigma=(-1)^{\sigma g}$, and samples $\Phi\in X^*$ with probability
+$|\widehat f_\sigma(\Phi)|^2$; Parseval normalizes this law. If
+$\sigma|_H\ne0$, it returns $\Phi(h_\sigma)$ for a fixed $h_\sigma\in H$ with
+$\sigma(h_\sigma)=1$. Otherwise it returns a fixed legal answer.
+In plain terms, a dense constant-output slice forces Fourier mass onto
+frequencies supported on the column directions that define the slice,
+and folding turns such a frequency into a legal answer.
+
+\begin{lemma}[Private decoding]\label{lem:decode}
+The decoder always returns a legal answer. Let $Z'\le L_O$ have dimension
+$s$. If on some nonempty slice $N|_{Z'}=\kappa$ one value of $g$ has density
+$\rho\ge2^{-d_H}$, then with probability at least
+$2^{-d_Hs}(\rho-2^{-d_H})^2$ the decoder returns an answer in $Z'$.
+\end{lemma}
+
+\begin{proof}
+Folding gives $f_\sigma(N+h_\sigma e_0^\top)=-f_\sigma(N)$, so every
+sampled frequency satisfies $\langle\Phi,h_\sigma e_0^\top\rangle=1$, that
+is, $\Phi(h_\sigma)$ has first coordinate one. Let
+$C_\sigma=\E[f_\sigma\mid N|_{Z'}=\kappa]$. The character identity for the
+dense value gives $\E_\sigma|C_\sigma|\ge\rho$. The characters vanishing on
+$H$ form a $2^{-d_H}$ fraction, so
+$\E_\sigma[\ind_{\sigma|_H\ne0}|C_\sigma|]\ge\rho-2^{-d_H}$. The maps
+vanishing on $Z'$ have annihilator $\mathcal F_{\rm col}=H^*\otimes Z'$, of
+size $2^{d_Hs}$. Averaging a character over the affine slice retains
+precisely these frequencies, so for any point $N_*$ of the slice
+\[
+ C_\sigma=\sum_{\Phi\in\mathcal F_{\rm col}}\widehat f_\sigma(\Phi)
+                (-1)^{\langle\Phi,N_*\rangle}.
+\]
+Two applications of Cauchy--Schwarz give
+\[
+ \Pr[\sigma|_H\ne0,\ \Phi\in\mathcal F_{\rm col}]
+ =\E_\sigma\Bigl[\ind_{\sigma|_H\ne0}
+   \sum_{\Phi\in\mathcal F_{\rm col}}|\widehat f_\sigma(\Phi)|^2\Bigr]
+ \ge2^{-d_Hs}\bigl(\rho-2^{-d_H}\bigr)^2.
+\]
+On this event $\Phi$ maps $H$ into $Z'$, so the answer lies in $Z'$.
+\end{proof}
+
+The second player fixes a representative $M_0$ of its row fiber, with
+$AM_0=S_O$, and applies the decoder to $g(N)=F_O(M_0+N,T_O)$ with $H=\ker A$, using only its
+own message; $g$ is folded by \eqref{eq:fold-share}. For useful data $D$
+put $Z'=\pi Z$, so $s\le r_{\rm s}$. Since the slice is nonempty,
+$\kappa(\pi q_j):=t_j-M_0\pi q_j$ defines a linear map $Z'\to H$. The
+transferred slice $N|_{Z'}=\kappa$ has a constant output with density
+$\rho=\rho_D\ge\alpha/2$; this description is
+used only in the analysis. Since
+$2^{-d_H}\le2^{-(\ell-r_{\rm s})}<\alpha/8$ and $d_Hs\le\ell r_{\rm s}$,
+Lemma~\ref{lem:decode} gives probability at least
+$2^{-\ell r_{\rm s}}(\alpha/4)^2$ of an answer in $Z'$.
+On this event, $a_O\in Z'$ and is legal. Because $\pi$ preserves the first
+coordinate, $a_O\in\pi\mathcal A$. The first player's independent uniform
+choice from \eqref{eq:answer-list} hits a suitable preimage with probability
+at least $2^{-r_{\rm s}}$. Averaging over useful data proves \eqref{eq:agreement}
+with the fixed positive constant
+\begin{equation}\label{eq:gamma}
+ \gamma=\gamma_1 2^{-\ell r_{\rm s}}(\alpha/4)^2 2^{-r_{\rm s}}.
+\end{equation}
+Both strategies use only their own messages. The agreement bound concerns
+the original unconditioned experiment.
+
+
+\section{Clean coordinates force disagreement}\label{sec:clean}
+
+\begin{proposition}[Clean coordinates]\label{prop:clean}
+If $\OPT(\mathcal E)\le4/5$, in particular in a NO instance with $\xi<1/100$,
+\emph{every} pair of strategies that use only their own
+messages \eqref{eq:messages} and private randomness, and return legal
+answers, satisfies
+\[
+ \Pr[\pi a_U=a_O]\le
+ \exp\Bigl[-\frac{2^{-\dim W-r_{\rm s}}}{3600}k^{1/3}\Bigr].
+\]
+\end{proposition}
+
+\begin{proof}
+By \eqref{eq:base-gap}, the equation--variable game has value at most
+$14/15$.
+
+Fix $A$ and combine the visible advice as
+\[
+ D_O=(T_O,S_O),\qquad E_A=W\oplus\operatorname{im}A.
+\]
+Conditional on questions and projections, its original intercept and all
+coefficient columns are independent uniform elements of $E_A$. Their law
+does not depend on equation identifiers or selected variable positions.
+Call a position clean when it is a singleton and its advice coefficient
+is zero. Conditional on $A$, positions are independently clean with
+probability
+\[
+ p_A=\beta 2^{-\dim W-\rank A},\qquad
+ \Pr[e_i=e,j_i=j,i\text{ clean}\mid A]
+       =\omega_e\frac{\beta}{3|E_A|}.
+\]
+Conditioning on cleanliness thus preserves exactly the base game's
+question-pair law.
+
+Let $I$ be the clean set. Fix only the following background: $A$, $I$,
+the \emph{original intercept on $O$}, and all questions, projection choices,
+and coefficients outside $I$. Do not fix a certificate, output, success
+event, or answer randomness. For each background of positive probability,
+the clean question pairs remain independent samples of the base game.
+This follows from the displayed identity, independence across positions,
+and independence of the original intercept. Repeated identifiers do not
+change the product law; positions have distinct local answer coordinates.
+
+Each player can reconstruct its own full message from the background
+and its own clean questions. Indeed, pulling a singleton coefficient
+$d_i$ back to an equation gives slopes
+$(d_i,0),(0,d_i)$ or $(d_i,d_i)$. The padded intercept is
+\[
+ c_U=c_O+\sum_{\substack{i\text{ singleton}\\j_i=3}}b_{e_i}d_i.
+\]
+At a clean position $d_i=0$, so both slopes and the intercept correction
+vanish. The equation player can reconstruct without knowing which variable
+was selected; the projected player can reconstruct without knowing the
+clean equations. Each runs its original strategy and keeps its clean
+answers. These are legal strategies for the $|I|$-fold base game. Fixing
+background merely selects a pair of strategies for this bound; it adds
+no message to the original experiment. Private randomness is a mixture
+of deterministic strategies and cannot increase the optimum.
+
+Full agreement implies success in every clean position. Input~3 and
+\eqref{eq:base-gap} give
+\[
+ \Pr[\pi a_U=a_O\mid\text{background}]\le(1-1/3600)^{|I|}.
+\]
+For $I=\varnothing$ use the bound one. We do not assume independence of
+the strategies' successes. Since $|I|$ is binomial conditional on $A$,
+\begin{align}
+ \Pr[\pi a_U=a_O]
+ &\le\E_A(1-p_A/3600)^k\nonumber\\
+ &\le\left(1-\frac{\beta 2^{-\dim W-r_{\rm s}}}{3600}\right)^k
+ \le\exp\left[-\frac{2^{-\dim W-r_{\rm s}}}{3600}k^{1/3}\right]
+ \longrightarrow0.\label{eq:clean-upper}
+\end{align}
+\end{proof}
+This bounds the \emph{same unconditioned experiment} as
+\eqref{eq:agreement}. Once the auxiliary spaces are fixed, sufficiently
+large $k$ gives a contradiction. Thus, when $\xi<1/100$, the intermediate
+game has the gap
+\begin{equation}\label{eq:intermediate-gap}
+ \mathrm{YES}:\val(\mathcal H)\ge1-k\xi-p_*/2,
+ \qquad \mathrm{NO}:\val(\mathcal H)\le99/100.
+\end{equation}
+
+\section{Removing weights, amplifying, and writing the output}\label{sec:finish}
+
+\paragraph{Rounding weights.}
+If there are $N_c$ weighted constraint occurrences, let $Q=\lceil N_c/\tau\rceil$.
+Start with $\lfloor Qw_e\rfloor$ copies of occurrence $e$ and distribute
+the remaining copies to the largest fractional parts. Then
+\[
+ \sum_e n_e=Q,\qquad |w_e-n_e/Q|\le1/Q,\qquad
+ \tfrac12\sum_e|w_e-n_e/Q|\le\tau.
+\]
+The weight differences sum to zero. Hence the weight of every subset of
+constraints changes by at most $\tau$, uniformly over labelings. The
+optimum changes by at most $\tau$ as well. No large common denominator
+is needed.
+
+\paragraph{A simple bipartite graph.}
+Replace every copy by a path of four edges with three fresh internal
+vertices. The first three permutations are identities; the fourth is
+the original constraint. For fixed endpoint labels, all four edges can
+be satisfied exactly when the original constraint holds. Otherwise exactly
+three can be satisfied. Distinct paths have disjoint interiors, so their
+optima can be achieved simultaneously. The resulting game $G_{\rm bip}$ satisfies
+\begin{equation}\label{eq:subdivision}
+ \left|\val(G_{\rm bip})-\left(1-\frac{1-\val(\mathcal H)}4\right)\right|
+ \le\tau/4.
+\end{equation}
+Place original vertices and path midpoints on one side and the other
+internal vertices on the other. A loop becomes a four-cycle, and parallel
+copies have distinct interiors. The graph is simple and bipartite.
+Reversing an edge leaves a binary translation unchanged.
+
+\paragraph{Parameter order.}
+Choose positive rationals $\eps_0\le\eps$ and $\delta_0\le\delta$.
+If $\tau\le1/200$, a NO instance has gap at least $1/800$ after subdivision.
+Choose a fixed integer $t$ such that
+\begin{equation}\label{eq:final-t}
+ \left(1-\frac1{10\,240\,000}\right)^t\le\delta_0.
+\end{equation}
+This choice precedes the alphabet: the bound in \eqref{eq:repetition}
+does not depend on it. The denominator is $16\cdot800^2$.
+Next choose rational budgets
+\[
+ p_*\le\eps_0/t,\qquad \tau\le\min\{1/200,\eps_0/t\}.
+\]
+The remaining order is
+\[
+ p_*\ \longrightarrow\ r_*\ \longrightarrow\ \eta
+ \ \longrightarrow\ \alpha,r_{\rm s},\ell_0
+ \ \longrightarrow\ \ell=3d\ge\ell_0,\ \mathcal V,K,W
+ \ \longrightarrow\ k,\beta\ \longrightarrow\ \xi.
+\]
+Here $\ell_0$ is the largest of Input~2's threshold for $\ell$ at retention
+$\eta/4$, the threshold for \eqref{eq:matrix-parameters}, and $3d_0$, where
+$d_0$ is such that every $d\ge d_0$ meets the gadget's genericity and
+$3d\ge r_0$ requirements; it exists because the proportion of nongeneric
+subspaces tends to zero.
+Choose a cube $k\ge k_0$, with $k_0$ from Proposition~\ref{prop:extraction},
+so large that the bound \eqref{eq:clean-upper} is below $\gamma$; this is
+possible because $k\beta=k^{1/3}\to\infty$. Then the extraction and clean
+coordinate bounds contradict each other in the NO case. As in the source,
+$k$ is a cube so that $\beta=k^{-2/3}$ is rational; this matters only for an
+effective search for the constants, which the theorem does not need.
+All thresholds are uniform over the instance and function family.
+Finally choose a positive rational
+\[
+ \xi<\min\{1/100,\eps_0/(2kt)\}.
+\]
+For fixed target errors, these finite constants can be hardcoded into one
+machine for every input length; their existence therefore suffices here.
+We make no uniform computability claim in the error targets.
+
+\paragraph{The final game.}
+In the YES case put $\mathrm{err}=k\xi+p_*/2\le\eps_0/t$.
+Output $G=G_{\rm bip}^{\otimes t}$. A good labeling in every coordinate and a union
+bound yield
+\[
+ \val(G)\ge1-t(\mathrm{err}+\tau)/4\ge1-\eps_0/2\ge1-\eps.
+\]
+In the NO case, \eqref{eq:repetition} and \eqref{eq:final-t} give
+\[
+ \val(G)\le\left(1-\frac1{10\,240\,000}\right)^t\le\delta_0\le\delta.
+\]
+The product graph is simple: a pair of product vertices specifies at most
+one edge in each coordinate. It is bipartite, and independent uniform
+base edges give uniform product edges. Its constraints are translations
+over the fixed alphabet $K^t=\F_2^{\ell t}$.
+
+\paragraph{Polynomial output length.}
+All dimensions and repetition counts are fixed before the input. If the
+processed parity system has $N_{\mathcal E}$ occurrences, there are
+$N_{\mathcal E}^k$ tuples. Each has a fixed number of tables and noise
+outcomes. Each constraint weight is a product of a fixed number of
+rationals of polynomial bit length. Keys are computed by fixed-dimensional
+linear algebra; even comparing every pair of keys is polynomial.
+The rounding multiplicity is linear in the number of tests, and the final
+power is fixed. The permutation tables have fixed size relative to the
+input. Thus the entire explicit game can be written in polynomial time,
+completing the argument for Theorem~\ref{thm:main}.
+
+\paragraph{Attribution and changes of presentation.}
+The construction and main proof are from \cite{UGT}. Its matrix-chart
+argument credits Barak--Kothari--Steurer \cite{BKS}; the needed
+calculation is proved here. The table matches passages of this note with
+those of \cite{UGT}; passages not listed are inherited in condensed form.
+
+\begin{center}
+\footnotesize
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.2\textwidth}
+ >{\raggedright\arraybackslash}p{0.18\textwidth}
+ >{\raggedright\arraybackslash}p{0.56\textwidth}@{}}
+\toprule
+This note & Source & Relation\\
+\midrule
+\S3.1 polar map; \S3.2 genericity &
+ \S3.1, Lemma 3.2; \S3.2, Lemma 3.6 &
+ Same statements. The polar map is written as a cross product; a square
+ parametrization replaces square roots of monomials.\\
+\S3.5, root step (Lemma~\ref{lem:root}) & \S3.5 &
+ Replaced, proved here: copies indexed by automorphisms, one quotient,
+ threshold $r_0$, output dimensions $3d$. Source: copies indexed by
+ injections, two quotients, threshold $3d+2$, all large dimensions.\\
+Erasure (Lemma~\ref{lem:advice}) & Lemma 5.5 &
+ Erased matrices get distinct new values outside $K$, instead of a random
+ recoloring in $K$ with concentration and counting bounds.\\
+Certificates (Lemmas~\ref{lem:slice}, \ref{lem:decode}; \S\S4.1--4.3) &
+ Theorem 5.1, Lemmas 5.5, 5.7, 5.8 &
+ Constant output, the case $z=0$ that the proof of Theorem 5.1 already
+ gives, instead of a general affine target $Mz+u$.\\
+\S5; \S6 & \S6; \S7 & Inherited; \S6 only shows that the constants exist,
+ while the source also shows that they are computable.\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The changes simplify the presentation and some proof steps; none is a
+claim of a new theorem or an independent verification of the preprint.
+
+\appendix
+\section{Lean check}\label{app:lean}
+
+OpenAI's repository \cite{UGT} contains a Lean~4 formalization of the
+source theorem, with a Comparator challenge that permits only the
+standard axioms. We report one run of this check, made on 9 October 2026
+at the revision pinned in \cite{UGT}, as an unprivileged user on a
+four-core x86-64 cloud machine. The check script
+(\texttt{ugc\_lean\_check.py}) and its complete output logs
+(\texttt{ugc-lean-ugt-check.log} and the directory \texttt{ugc\_out})
+are deposited with this note at
+\href{https://doi.org/\depositdoi}{\texttt{doi:\depositdoi}}.
+
+\begin{center}
+\footnotesize
+\begin{tabular}{@{}ll@{}}
+Repository & \texttt{openai/math}, revision
+ \texttt{fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb}\\
+Tools & Lean 4.34.1 (pinned toolchain); Comparator commit \texttt{d03acab}
+ (tag \texttt{v4.34.0})\\
+Command & \texttt{lake env comparator
+ ComparatorChallenges/UniqueGamesTheorem.json}\\
+Declaration & \texttt{OAI.UniqueGamesTheorem.theorem11}\\
+Axioms & \texttt{propext}, \texttt{Classical.choice},
+ \texttt{Quot.sound}\\
+Verdict & ``Lean default kernel accepts the solution'', ``Your solution
+ is okay!''
+\end{tabular}
+\end{center}
+
+\paragraph{Procedure and result.} Following the repository's
+instructions, our script ran \texttt{lake update} (manifest and toolchain
+unchanged), \texttt{lake exe cache get} and the command above in the
+directory \texttt{lean}, then a separate \texttt{lake build} of the
+solution and challenge modules and \texttt{\#print axioms}. The challenge
+module states the declaration's type: \texttt{BinaryGapReduction}~$\eps$~$\delta$
+is nonempty for all real $\eps,\delta\in(0,1/2)$. Comparator exited with
+code~$0$, the build succeeded, and the solution's axioms include no
+\texttt{sorryAx}; only the challenge module uses \texttt{sorry}, by design,
+to state the type. The run took 66 minutes.
+
+\paragraph{Caveats.} The sandbox was not enforced: \texttt{landrun}
+started, but in our test a write outside its allowed directory succeeded,
+and the \texttt{systemd-run} guard recommended in Comparator's README was
+unavailable. The check therefore lacked the recommended isolation. We did
+not audit whether the formal statement matches Theorem~\ref{thm:main}.
+Above all, the run concerns OpenAI's formal development of the source
+theorem. It does not check this note's modified root construction
+(Lemma~\ref{lem:root}), its other changes listed under Attribution, or
+anything else written here.
+
+\footnotesize
+\begin{thebibliography}{9}
+\setlength{\itemsep}{1pt}
+\bibitem{UGT}
+OpenAI. \emph{The Unique Games Theorem}. Preprint, 23 September 2026,
+58 pages. Pinned source revision:
+\href{https://github.com/openai/math/tree/fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb/preprints/The-Unique-Games-Theorem-September-23-2026}{GitHub source and paper}.
+
+\bibitem{Hastad}
+Johan H\aa stad. \emph{Some Optimal Inapproximability Results}.
+Journal of the ACM 48(4), 798--859, 2001.
+Input 1 uses Theorem 5.4 and its proof in the
+\href{https://people.kth.se/~johanh/optimalinap.pdf}{author manuscript}.
+
+\bibitem{KMS}
+Subhash Khot, Dor Minzer, and Muli Safra.
+\emph{Pseudorandom Sets in Grassmann Graph Have Near-Perfect Expansion}.
+Annals of Mathematics 198(1), 1--92, 2023.
+Input 2 uses Theorem 1.12 in the
+\href{https://eccc.weizmann.ac.il/report/2018/006/revision/2/download}{second 2018 revision}.
+
+\bibitem{DS}
+Irit Dinur and David Steurer. \emph{Analytical Approach to Parallel
+Repetition}. Proceedings of STOC, 624--633, 2014.
+Input 3 uses Corollary 1.2 in the
+\href{https://www.dsteurer.org/paper/productgames.pdf}{10 June 2014 author version}.
+
+\bibitem{BKS}
+Boaz Barak, Pravesh K. Kothari, and David Steurer.
+\emph{Small-Set Expansion in Shortcode Graph and the 2-to-2 Conjecture}.
+Proceedings of ITCS, LIPIcs 124, 9:1--9:12, 2019.
+
+\bibitem{Fortnow}
+Lance Fortnow (prepared with Claude). \emph{The Unique Games Theorem: An
+Expository Account of the Proof}. 7 October 2026,
+\href{https://github.com/fortnow/AI-Papers}{github.com/fortnow/AI-Papers}.
+\raggedright
+\bibitem{ShortProof}
+Ariel Elboim. \emph{The Unique Games Theorem: A Short Self-Contained
+Proof}. Preprint, 2026,
+\href{https://doi.org/10.5281/zenodo.23265572}{doi:10.5281/zenodo.23265572}.
+\end{thebibliography}
+\end{document}

@@ -1,0 +1,10 @@
+cff-version: 1.2.0
+message: "If you use this work, please cite it as below."
+title: "The Unique Games Theorem: A Short Self-Contained Proof"
+authors:
+  - family-names: Elboim
+    given-names: Ariel
+    orcid: "https://orcid.org/0009-0001-1341-366X"
+doi: 10.5281/zenodo.23265572
+date-released: 2026-10-09
+license: CC-BY-4.0

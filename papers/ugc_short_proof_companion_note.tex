@@ -1,0 +1,193 @@
+\documentclass[11pt]{article}
+\usepackage[a4paper,margin=26mm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern,microtype}
+\usepackage[colorlinks=true,linkcolor=blue,urlcolor=blue,citecolor=blue]{hyperref}
+\hypersetup{pdftitle={Companion Note to "The Unique Games Theorem: A Short Self-Contained Proof": Attribution, Provenance and Checks},pdfauthor={Ariel Elboim}}
+\newcommand{\F}{\mathbb F}
+\newcommand{\OPT}{\operatorname{OPT}}
+\newcommand{\ind}{\mathbf 1}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\depositdoi}{10.5281/zenodo.23265572}
+\title{Companion Note to ``The Unique Games Theorem:\\ A Short Self-Contained Proof'':\\ Attribution, Provenance and Checks}
+\author{Ariel Elboim\\\small Independent researcher, ORCID 0009-0001-1341-366X\\\small Prepared with Codex (OpenAI) and Claude (Anthropic)}
+\date{9 October 2026}
+\begin{document}
+\maketitle
+\noindent This note accompanies the paper \emph{The Unique Games Theorem:
+A Short Self-Contained Proof} \cite{Main} and is deposited with it at
+\href{https://doi.org/\depositdoi}{doi:\depositdoi}. The
+paper gives a short proof of the theorem of OpenAI's preprint \emph{The
+Unique Games Theorem} \cite{UGT}; a longer presentation that follows the
+source closely is \cite{Elboim}. Below we list the paper's departures from
+the source, credit the contributors to each simplification, describe how
+the paper was reviewed, and report a run of the Comparator check on
+OpenAI's Lean formalization. Section, theorem, proposition and lemma
+numbers refer to the paper.
+
+\section*{Attribution and changes of presentation}
+
+The construction and main proof are from \cite{UGT}. The changes below
+simplify the presentation and some proof steps; none is a claim of a new
+theorem or an independent verification of the preprint.
+
+\paragraph{Parity equations, tables and weights (Sections 2 and 5).}
+The source makes the variables of each equation distinct by replacing
+every variable with $100$ clones and listing all distinct-clone choices
+with conditional weights; its bound uses sign rounding of clone biases and
+conditioning. We instead cancel repeated variables and replace each unary
+equation by three equations on a triangle of fresh variables; the bound
+$\frac23+\frac13\OPT$ suffices, since only a constant gap is needed, and
+turns the source's constants $4/5$, $14/15$ and $3600$ into $6/7$, $20/21$
+and $7056$. The source rounds occurrence weights before subdividing; we
+keep exact multiplicities, using the equally likely random strings of
+H\aa stad's verifier. We define a key as the coarsest factorization of a
+table, so pullback compatibility follows from uniqueness; the source
+checks that explicit third-bit intercept corrections cancel.
+
+\paragraph{The noise gadget (Section 3).}
+The source builds the recursion on translation spaces, starts the
+gadget's rank tracking from a generic space, and realizes its output by a
+quotient, then copies indexed by injections and a second quotient. In the
+paper the recursion is written in direct coordinates
+$V_t=W_t\oplus B_{\rm blk}$, so the output is already a subspace and no
+quotient is needed; genericity needs only the alignment bound, without
+excluding proportional pairs; instead of following one lift (in the
+source's sense) through chosen sections, we pull back the whole observer
+family; and instead of following the random leaf path with a filtration
+and telescoping the expected drops, we prove a detection bound for every
+family by induction on the height, whose potential $H_r-\theta N_S/r$ also
+admits an arbitrary starting space at a one-time cost below
+$2^{r_0}\theta$. The threshold becomes $r_0$, and only output dimensions
+divisible by $3$ are realized, which suffices for every later use. In the
+kernel identity and the genericity argument, squaring the alignment
+equation and formal differentiation over $\F_2(y_{ij})$ replace the
+source's square-root monomial-independence and double-annihilator step,
+and one annihilating row vector replaces its nonzero augmented minor when
+passing to $F$; the closing point-indicator count follows the source. The
+source's update space $\{(a,Q(a)+w):a\in A,\ v\cdot w=0\}$ is written in
+the paper, via $w\mapsto w+t^2Q(v)$ at $a=tv$, as the kernel of one
+$F$-valued equation, which yields its dimension, the update count and the
+kernel identity.
+
+\paragraph{Soundness (Section 4).}
+The source's matrix-chart argument credits Barak, Kothari and Steurer
+\cite{BKS}; the needed calculation is proved in the paper, in the proof
+of Lemma~3. The source shows that good row advice is frequent by
+recoloring randomly inside $K$ and applying a concentration and counting
+bound; we instead bound acceptance directly by $\eta$ plus twice the
+measure of the union of good row fibers, which needs neither. The source
+selects useful projected data and decodes affine targets $Mz+u$; we keep
+constant-output certificates, transfer a score odd along a random nonzero
+$h\in\ker A$, and let the second player guess the output and
+Fourier-sample one row along $h$, which yields a legal answer at every
+sampled frequency; Cauchy--Schwarz then gives unconditional agreement
+without revealing the certificate. The noise comparison likewise expands
+$\ind_{F_U=u}$ rather than averaging over output characters. The source
+takes $k$ along cubes so that $\beta=k^{-2/3}$ is rational; $\beta$ enters
+only the soundness experiment, never the output game, so every large $k$
+is allowed in the paper. In that experiment, singleton columns of $M_O$
+are drawn from $\ker A$ and those of $T_O$ are zero, so every singleton is
+clean; the source uses only singletons whose advice vanishes.
+
+\section*{Provenance and review}
+
+Several drafts of the paper received source-based reviews by separate
+Claude instances and by Codex; Codex had also helped write an earlier
+draft. After reviewing the draft that became the longer presentation
+\cite{Elboim}, Codex proposed, at the author's request and in eight
+rounds, most of the departures listed under Attribution. Claude proposed
+the triangle, which replaced Codex's seven-variable gadget, the keys as
+coarsest factorizations, the induction on the height, the update count,
+the single annihilator and the update space as one kernel in Section~3,
+the agreement bound through one conditional expectation in Section~4, the
+two-stage sampling in Section~4.3, and three
+restructurings: one soundness proposition (Proposition~2), one lemma from
+test acceptance to good row fibers (Lemma~3), and one choice of the gadget
+parameters in Section~3. The model gpt-6-astra (OpenAI) proposed the transferred
+correlation and a one-row decoder with a random character, and a separate
+Codex run through the API (gpt-6.1-sol, OpenAI) proposed a one-row
+decoder that guesses the output value instead. Muse Spark 1.3 (Meta)
+proposed compressing parts of Sections~2, 3, 4.3 and~5 and reading the
+update count through the dot product of the output change with $v$.
+Gemini 3.8 Flash (Google) proposed treating the score transfer and the
+decoder as one subsection. A separate Claude reviewer checked each round
+against the preceding draft, and its fixes are applied. These reviews do
+not certify the preprint or constitute formal verification of the paper,
+and no human expert has reviewed it.
+
+\section*{Lean check}
+
+OpenAI's repository \cite{UGT} contains a Lean~4 formalization of the
+source theorem, with a Comparator challenge that permits only the
+standard axioms. We report one run of this check, made on 9 October 2026
+at the revision pinned in \cite{UGT}, as an unprivileged user on a
+four-core x86-64 cloud machine. It is the run reported in Appendix~A of
+\cite{Elboim}. The check script (\texttt{ugc\_lean\_check.py}) and its
+complete output logs (\texttt{ugc-lean-ugt-check.log} and the output
+directory, as \texttt{ugc\_out.zip}) are deposited with that paper at
+\href{https://doi.org/10.5281/zenodo.23264902}{\texttt{doi:10.5281/zenodo.23264902}}.
+
+\begin{center}
+\footnotesize
+\begin{tabular}{@{}ll@{}}
+Repository & \texttt{openai/math}, revision
+ \texttt{fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb}\\
+Tools & Lean 4.34.1 (pinned toolchain); Comparator commit \texttt{d03acab}
+ (tag \texttt{v4.34.0})\\
+Command & \texttt{lake env comparator
+ ComparatorChallenges/UniqueGamesTheorem.json}\\
+Declaration & \texttt{OAI.UniqueGamesTheorem.theorem11}\\
+Axioms & \texttt{propext}, \texttt{Classical.choice},
+ \texttt{Quot.sound}\\
+Verdict & ``Lean default kernel accepts the solution'', ``Your solution
+ is okay!''
+\end{tabular}
+\end{center}
+
+\paragraph{Procedure and result.} Following the repository's
+instructions, our script ran \texttt{lake update} (manifest and toolchain
+unchanged), \texttt{lake exe cache get} and the command above in the
+directory \texttt{lean}, then a separate \texttt{lake build} of the
+solution and challenge modules and \texttt{\#print axioms}. The challenge
+module states the declaration's type: \texttt{BinaryGapReduction}~$\eps$~$\delta$
+is nonempty for all real $\eps,\delta\in(0,1/2)$. Comparator exited with
+code~$0$, the build succeeded, and the solution's axioms include no
+\texttt{sorryAx}; only the challenge module uses \texttt{sorry}, by design,
+to state the type. The run took 66 minutes.
+
+\paragraph{Caveats.} The sandbox was not enforced: \texttt{landrun}
+started, but in our test a write outside its allowed directory succeeded,
+and the \texttt{systemd-run} guard recommended in Comparator's README was
+unavailable. The check therefore lacked the recommended isolation. We did
+not audit whether the formal statement matches Theorem~1 of the paper.
+Above all, the run concerns OpenAI's formal development of the source
+theorem. It does not check the paper's simplifications listed under
+Attribution, or anything else written in the paper, and the paper is not
+derived from the formalization.
+
+{\small
+\begin{thebibliography}{9}
+\bibitem{Main}
+Ariel Elboim. \emph{The Unique Games Theorem: A Short Self-Contained
+Proof}. 2026. Deposited with this note at
+\href{https://doi.org/\depositdoi}{doi:\depositdoi}.
+
+\bibitem{UGT}
+OpenAI. \emph{The Unique Games Theorem}. Preprint, 23 September 2026,
+58 pages. Pinned source revision:
+\href{https://github.com/openai/math/tree/fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb/preprints/The-Unique-Games-Theorem-September-23-2026}{GitHub source and paper}.
+
+\bibitem{Elboim}
+Ariel Elboim. \emph{A Compressed Presentation of OpenAI's Proof of the
+Unique Games Theorem}. Preprint, 2026,
+\href{https://doi.org/10.5281/zenodo.23264902}{doi:10.5281/zenodo.23264902}.
+
+\bibitem{BKS}
+Boaz Barak, Pravesh K. Kothari, and David Steurer.
+\emph{Small-Set Expansion in Shortcode Graph and the 2-to-2 Conjecture}.
+Proceedings of ITCS, LIPIcs 124, 9:1--9:12, 2019.
+\end{thebibliography}
+}
+\end{document}

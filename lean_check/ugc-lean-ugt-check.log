@@ -1,0 +1,204 @@
+[{"stream_name":"stdout","time":1.185570559,"data":"UGC Lean check: openai/math@fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb; kaggle=True; work=/tmp/ugc; out=/kaggle/working/ugc_out; deadline 675 min; comparator v4.34.0 (d03acab) + lean4export v4.34.0 built on the project's toolchain; landrun main@811cfff\n"}
+,{"stream_name":"stdout","time":1.590665639,"data":"running the check as unprivileged user ugcchk (uid 1001)\n"}
+,{"stream_name":"stdout","time":1.64686033,"data":"[05:54:03 +0m] START sysinfo (budget left 675 min)\n"}
+,{"stream_name":"stdout","time":2.153722916,"data":"[05:54:03 +0m] END sysinfo rc=0 after 0m0s\n"}
+,{"stream_name":"stdout","time":2.193390129,"data":"[05:54:04 +0m] START clone (budget left 674 min)\n"}
+,{"stream_name":"stdout","time":9.196271962,"data":"[05:54:11 +0m] END clone rc=0 after 0m7s\n"}
+,{"stream_name":"stdout","time":9.21615961,"data":"[05:54:11 +0m] START elan (budget left 674 min)\n"}
+,{"stream_name":"stdout","time":38.940242185,"data":"[05:54:40 +0m] END elan rc=0 after 0m29s\n"}
+,{"stream_name":"stdout","time":39.017274517,"data":"[05:54:40 +0m] START lake_update (budget left 674 min)\n"}
+,{"stream_name":"stdout","time":301.652693228,"data":"[hb 05:59:03 +5m] phase=lake_update\n"}
+,{"stream_name":"stdout","time":301.661533913,"data":"    Downloaded: 8758 file(s) [attempted 8758/8908 = 98%, 2947 KB/s], Decompressed: 507\u001b[K\n"}
+,{"stream_name":"stdout","time":301.661561417,"data":"    Downloaded: 8859 file(s) [attempted 8859/8908 = 99%, 1875 KB/s], Decompressed: 507\u001b[K\n"}
+,{"stream_name":"stdout","time":301.661567905,"data":"    Downloaded: 8908 file(s) [attempted 8908/8908 = 100%, 1875 KB/s], Decompressed: 507\u001b[K\n"}
+,{"stream_name":"stdout","time":377.448418397,"data":"[06:00:19 +6m] END lake_update rc=0 after 5m39s\n"}
+,{"stream_name":"stdout","time":377.470285392,"data":"[06:00:19 +6m] START cache_get (budget left 668 min)\n"}
+,{"stream_name":"stdout","time":426.581229865,"data":"[06:01:08 +7m] END cache_get rc=0 after 0m49s\n"}
+,{"stream_name":"stdout","time":426.594415284,"data":"[06:01:08 +7m] START tools_lean (budget left 667 min)\n"}
+,{"stream_name":"stdout","time":460.530451052,"data":"[06:01:42 +7m] END tools_lean rc=0 after 0m34s\n"}
+,{"stream_name":"stdout","time":460.563135883,"data":"[06:01:42 +7m] START landrun_build (budget left 667 min)\n"}
+,{"stream_name":"stdout","time":485.37844249,"data":"[06:02:07 +8m] END landrun_build rc=0 after 0m25s\n"}
+,{"stream_name":"stdout","time":485.391446317,"data":"[06:02:07 +8m] START sandbox_test (budget left 666 min)\n"}
+,{"stream_name":"stdout","time":485.550582274,"data":"[06:02:07 +8m] END sandbox_test rc=0 after 0m0s\n"}
+,{"stream_name":"stdout","time":485.575232051,"data":"[06:02:07 +8m] START comparator_real (budget left 666 min)\n"}
+,{"stream_name":"stdout","time":601.738636907,"data":"[hb 06:04:03 +10m] phase=comparator_real\n"}
+,{"stream_name":"stdout","time":601.758667034,"data":"    06:03:55 ✔ [8938/8959] Built OAI.Computability.UniqueGames.Foundations.SamplingLemmas (14s)\n"}
+,{"stream_name":"stdout","time":601.7587225,"data":"    06:03:56 ✔ [8939/8959] Built OAI.Computability.UniqueGames.Games.FinishBoundsLemmas (12s)\n"}
+,{"stream_name":"stdout","time":601.758730308,"data":"    06:04:03 ✔ [8940/8959] Built OAI.Computability.UniqueGames.Inverse.KMSAffineRestrictionComplementLemmas (18s)\n"}
+,{"stream_name":"stdout","time":901.863671956,"data":"[hb 06:09:03 +15m] phase=comparator_real\n"}
+,{"stream_name":"stdout","time":901.885577497,"data":"    06:08:50 ✔ [8995/9023] Built OAI.Computability.UniqueGames.Games.Overlap (8.9s)\n"}
+,{"stream_name":"stdout","time":901.885630979,"data":"    06:08:54 ✔ [8996/9023] Built OAI.Computability.UniqueGames.Foundations.LabelBound (6.1s)\n"}
+,{"stream_name":"stdout","time":901.885664163,"data":"    06:08:55 ✔ [8997/9023] Built OAI.Computability.UniqueGames.Games.SelectionSequence (6.6s)\n"}
+,{"stream_name":"stdout","time":1201.981361523,"data":"[hb 06:14:03 +20m] phase=comparator_real\n"}
+,{"stream_name":"stdout","time":1201.998148866,"data":"    06:13:41 ✔ [9033/9062] Built OAI.Computability.UniqueGames.Reduction.FinalParametersLemmas (32s)\n"}
+,{"stream_name":"stdout","time":1201.998190035,"data":"    06:13:54 ✔ [9034/9062] Built OAI.Computability.UniqueGames.Reduction.ExplicitLemmas (62s)\n"}
+,{"stream_name":"stdout","time":1201.998197156,"data":"    06:14:01 ✔ [9035/9064] Built OAI.Computability.UniqueGames.Inverse.RowErasureLemmas (24s)\n"}
+,{"stream_name":"stdout","time":1502.095419576,"data":"[hb 06:19:03 +25m] phase=comparator_real\n"}
+,{"stream_name":"stdout","time":1502.105750988,"data":"    06:18:49 ✔ [9076/9114] Built OAI.Computability.UniqueGames.Analysis.A5ReverseIndex (23s)\n"}
+,{"stream_name":"stdout","time":1502.105786998,"data":"    06:18:51 ✔ [9077/9116] Built OAI.Computability.UniqueGames.Decoding.TableKeysLemmas (42s)\n"}
+,{"stream_name":"stdout","time":1502.105793539,"data":"    06:18:56 ✔ [9078/9116] Built OAI.Computability.UniqueGames.Decoding.VisibleTransferLemmas (7.9s)\n"}
+,{"stream_name":"stdout","time":1802.194787405,"data":"[hb 06:24:04 +30m] phase=comparator_real\n"}
+,{"stream_name":"stdout","time":1802.233387158,"data":"    06:23:58 ✔ [9114/9152] Built OAI.Computability.UniqueGames.PCP.CloudRoundingLemmas (35s)\n"}
+,{"stream_name":"stdout","time":1802.233428649,"data":"    06:24:00 ✔ [9115/9152] Built OAI.Computability.UniqueGames.Inverse.KMSBasisComparisonNeighborsRetention (18s)\n"}
+,{"stream_name":"stdout","time":1802.233436279,"data":"    06:24:01 ✔ [9116/9152] Built OAI.Computability.UniqueGames.Inverse.KMSKernelOrbitsFourierLemmas (49s)\n"}
+,{"stream_name":"stdout","time":2102.371361774,"data":"[hb 06:29:04 +35m] phase=comparator_real\n"}
+,{"stream_name":"stdout","time":2102.386644987,"data":"    06:28:47 ✔ [9157/9196] Built OAI.Computability.UniqueGames.PCP.SourceSignaturePrepareLemmas (34s)\n"}
+,{"stream_name":"stdout","time":2102.386686803,"data":"    06:28:50 ✔ [9158/9196] Built OAI.Computability.UniqueGames.PCP.AlphabetGraphLemmas (45s)\n"}
+,{"stream_name":"stdout","time":2102.386692455,"data":"    06:28:52 ✔ [9159/9196] Built OAI.Computability.UniqueGames.Machines.MachineUnaryLessAtLemmas (37s)\n"}
+,{"stream_name":"stdout","time":2402.478441108,"data":"[hb 06:34:04 +40m] phase=comparator_real\n"}
+,{"stream_name":"stdout","time":2402.495107274,"data":"    06:33:52 ✔ [9197/9222] Built OAI.Computability.UniqueGames.PCP.PreprocessingRegularWords (32s)\n"}
+,{"stream_name":"stdout","time":2402.49517321,"data":"    06:33:55 ✔ [9198/9222] Built OAI.Computability.UniqueGames.Machines.MachineCloudCount (33s)\n"}
+,{"stream_name":"stdout","time":2402.495181564,"data":"    06:33:57 ✔ [9199/9223] Built OAI.Computability.UniqueGames.Decoding.ActualSeedSamplingLemmas (30s)\n"}
+,{"stream_name":"stdout","time":2702.600752665,"data":"[hb 06:39:04 +45m] phase=comparator_real\n"}
+,{"stream_name":"stdout","time":2702.612389001,"data":"    06:38:33 ✔ [9246/9259] Built OAI.Computability.UniqueGames.Machines.MachineOverlayTable (47s)\n"}
+,{"stream_name":"stdout","time":2702.612430959,"data":"    06:38:54 ✔ [9247/9263] Built OAI.Computability.UniqueGames.Machines.MachineRegularLift (23s)\n"}
+,{"stream_name":"stdout","time":2702.612437805,"data":"    06:39:01 ✔ [9248/9263] Built OAI.Computability.UniqueGames.Machines.MachineRegularInternalRow (57s)\n"}
+,{"stream_name":"stdout","time":3002.693925681,"data":"[hb 06:44:04 +50m] phase=comparator_real\n"}
+,{"stream_name":"stdout","time":3002.804389048,"data":"    06:43:53 ✔ [9306/9334] Built OAI.Computability.UniqueGames.Quadratic.AlignmentCertificateLemmas (13s)\n"}
+,{"stream_name":"stdout","time":3002.804452502,"data":"    06:44:00 ✔ [9307/9334] Built OAI.Computability.UniqueGames.Inverse.EqualityFiber (9.5s)\n"}
+,{"stream_name":"stdout","time":3002.804458691,"data":"    06:44:00 ✔ [9308/9334] Built OAI.Computability.UniqueGames.Machines.MachineRegularOwnerBodyBounds (21s)\n"}
+,{"stream_name":"stdout","time":3302.879318758,"data":"[hb 06:49:04 +55m] phase=comparator_real\n"}
+,{"stream_name":"stdout","time":3302.890691685,"data":"    06:48:53 ✔ [9374/9401] Built OAI.Computability.UniqueGames.Reduction.ParameterSelection (7.2s)\n"}
+,{"stream_name":"stdout","time":3302.890727076,"data":"    06:49:02 ✔ [9375/9401] Built OAI.Computability.UniqueGames.Machines.MachineBinaryInputReductionLemmas (26s)\n"}
+,{"stream_name":"stdout","time":3302.890734392,"data":"    06:49:04 ✔ [9376/9401] Built OAI.Computability.UniqueGames.Reduction.AddressTuplePolynomialLemmas (41s)\n"}
+,{"stream_name":"stderr","time":3302.921643883,"data":"grep: (standard input): binary file matches\n"}
+,{"stream_name":"stdout","time":3602.962851332,"data":"[hb 06:54:04 +60m] phase=comparator_real\n"}
+,{"stream_name":"stdout","time":3602.973068983,"data":"    06:51:22 ✔ [9400/9401] Built OAI.Computability.UniqueGames.Theorem (8.7s)\n"}
+,{"stream_name":"stdout","time":3602.973112153,"data":"    06:51:31 ✔ [9401/9401] Built OAI.Computability.UniqueGames.Main (8.2s)\n"}
+,{"stream_name":"stdout","time":3602.973118933,"data":"    06:51:31 Build completed successfully (9401 jobs).\n"}
+,{"stream_name":"stdout","time":3903.007833307,"data":"[hb 06:59:04 +65m] phase=comparator_real\n"}
+,{"stream_name":"stdout","time":3903.014798196,"data":"    06:51:22 ✔ [9400/9401] Built OAI.Computability.UniqueGames.Theorem (8.7s)\n"}
+,{"stream_name":"stdout","time":3903.014836029,"data":"    06:51:31 ✔ [9401/9401] Built OAI.Computability.UniqueGames.Main (8.2s)\n"}
+,{"stream_name":"stdout","time":3903.01484327,"data":"    06:51:31 Build completed successfully (9401 jobs).\n"}
+,{"stream_name":"stdout","time":3904.066099555,"data":"[06:59:05 +65m] END comparator_real rc=0 after 56m58s\n"}
+,{"stream_name":"stdout","time":3904.086663984,"data":"[06:59:05 +65m] START build_explicit (budget left 609 min)\n"}
+,{"stream_name":"stdout","time":3934.049992745,"data":"[06:59:35 +65m] END build_explicit rc=0 after 0m30s\n"}
+,{"stream_name":"stdout","time":3934.063214282,"data":"[06:59:35 +65m] START axioms (budget left 609 min)\n"}
+,{"stream_name":"stdout","time":3972.733511335,"data":"[07:00:14 +66m] END axioms rc=0 after 0m39s\n"}
+,{"stream_name":"stderr","time":3972.753048403,"data":"Terminated\n"}
+,{"stream_name":"stdout","time":3972.843880861,"data":"[07:00:14 +66m] DONE; summary in /kaggle/working/ugc_out/SUMMARY.txt\n"}
+,{"stream_name":"stdout","time":3972.887322267,"data":"job.sh exit 0 after 66.2 min\n"}
+,{"stream_name":"stdout","time":3972.900560864,"data":"UGC Lean check: openai/math lean/, Comparator config ComparatorChallenges/UniqueGamesTheorem.json\n"}
+,{"stream_name":"stdout","time":3972.900595332,"data":"finished_utc: 2026-10-09T07:00:14Z   wall: 66 min\n"}
+,{"stream_name":"stdout","time":3972.900603982,"data":"machine: x86_64, 4 cores, 31 GB RAM, kernel 6.18.48+\n"}
+,{"stream_name":"stdout","time":3972.900611567,"data":"run_as: ugcchk (uid 1001)\n"}
+,{"stream_name":"stdout","time":3972.900617285,"data":"deadline_utc: 2026-10-09T17:09:03Z\n"}
+,{"stream_name":"stdout","time":3972.900623038,"data":"commit: fd4aeeb2ee4fc729c18d98444fed42fd0529eeeb\n"}
+,{"stream_name":"stdout","time":3972.900628929,"data":"toolchain: leanprover/lean4:v4.34.1\n"}
+,{"stream_name":"stdout","time":3972.900635175,"data":"lean_version: Lean (version 4.34.1, x86_64-unknown-linux-gnu, commit 5045d0056413266e57c625dcd7c365b10e377c52, Release)\n"}
+,{"stream_name":"stdout","time":3972.900657322,"data":"lake_update: ok (0 diff lines in lake-manifest.json/lean-toolchain)\n"}
+,{"stream_name":"stdout","time":3972.900661692,"data":"cache_get: ok\n"}
+,{"stream_name":"stdout","time":3972.900665849,"data":"tools_lean: TOOLS_MODE=both built with leanprover/lean4:v4.34.1\n"}
+,{"stream_name":"stdout","time":3972.900669976,"data":"landrun_build: ok\n"}
+,{"stream_name":"stdout","time":3972.900673964,"data":"landrun_sandbox: runs-but-not-enforcing\n"}
+,{"stream_name":"stdout","time":3972.900677913,"data":"systemd_run_guard: not available (README's systemd-run AF_UNIX guard skipped)\n"}
+,{"stream_name":"stdout","time":3972.900681985,"data":"comparator_verdict_real_landrun: PASS (Your solution is okay!)\n"}
+,{"stream_name":"stdout","time":3972.900688063,"data":"comparator_verdict_fake_landrun: NOT RUN\n"}
+,{"stream_name":"stdout","time":3972.900697193,"data":"explicit_lake_build_rc: 0\n"}
+,{"stream_name":"stdout","time":3972.900699959,"data":"print_axioms: depends on axioms: [propext, Classical.choice, Quot.sound]\n"}
+,{"stream_name":"stdout","time":3972.900703222,"data":"axioms_verdict: OK (only permitted axioms; no sorryAx)\n"}
+,{"stream_name":"stdout","time":3972.900722274,"data":"--- timings (phase rc seconds start):\n"}
+,{"stream_name":"stdout","time":3972.90072759,"data":"phase rc seconds start_utc\n"}
+,{"stream_name":"stdout","time":3972.900732176,"data":"sysinfo 0 0 2026-10-09T05:54:03Z\n"}
+,{"stream_name":"stdout","time":3972.900737201,"data":"clone 0 7 2026-10-09T05:54:04Z\n"}
+,{"stream_name":"stdout","time":3972.90074205,"data":"elan 0 29 2026-10-09T05:54:11Z\n"}
+,{"stream_name":"stdout","time":3972.900746454,"data":"lake_update 0 339 2026-10-09T05:54:40Z\n"}
+,{"stream_name":"stdout","time":3972.900751393,"data":"cache_get 0 49 2026-10-09T06:00:19Z\n"}
+,{"stream_name":"stdout","time":3972.900755447,"data":"tools_lean 0 34 2026-10-09T06:01:08Z\n"}
+,{"stream_name":"stdout","time":3972.90075949,"data":"landrun_build 0 25 2026-10-09T06:01:42Z\n"}
+,{"stream_name":"stdout","time":3972.900763384,"data":"sandbox_test 0 0 2026-10-09T06:02:07Z\n"}
+,{"stream_name":"stdout","time":3972.900767397,"data":"comparator_real 0 3418 2026-10-09T06:02:07Z\n"}
+,{"stream_name":"stdout","time":3972.900771352,"data":"build_explicit 0 30 2026-10-09T06:59:05Z\n"}
+,{"stream_name":"stdout","time":3972.900775406,"data":"axioms 0 39 2026-10-09T06:59:35Z\n"}
+,{"stream_name":"stdout","time":3972.900779379,"data":"--- #check / #print axioms output:\n"}
+,{"stream_name":"stdout","time":3972.900783336,"data":"===== solution (OAI.Computability.UniqueGames.Main)\n"}
+,{"stream_name":"stdout","time":3972.90078736,"data":"warning: PrimeNumberTheoremAnd: repository '/tmp/ugc/src/lean/.lake/packages/PrimeNumberTheoremAnd' has local changes\n"}
+,{"stream_name":"stdout","time":3972.90079162,"data":"warning: belyi: repository '/tmp/ugc/src/lean/.lake/packages/belyi' has local changes\n"}
+,{"stream_name":"stdout","time":3972.90079587,"data":"warning: formal-schemes: repository '/tmp/ugc/src/lean/.lake/packages/formal-schemes' has local changes\n"}
+,{"stream_name":"stdout","time":3972.900801975,"data":"warning: elliptic-curves: repository '/tmp/ugc/src/lean/.lake/packages/elliptic-curves' has local changes\n"}
+,{"stream_name":"stdout","time":3972.900825788,"data":"warning: tempered-fundamental-groups: repository '/tmp/ugc/src/lean/.lake/packages/tempered-fundamental-groups' has local changes\n"}
+,{"stream_name":"stdout","time":3972.900831118,"data":"warning: oka: repository '/tmp/ugc/src/lean/.lake/packages/oka' has local changes\n"}
+,{"stream_name":"stdout","time":3972.900843006,"data":"warning: orbicurve-cores: repository '/tmp/ugc/src/lean/.lake/packages/orbicurve-cores' has local changes\n"}
+,{"stream_name":"stdout","time":3972.900847881,"data":"warning: pi1: repository '/tmp/ugc/src/lean/.lake/packages/pi1' has local changes\n"}
+,{"stream_name":"stdout","time":3972.900852057,"data":"warning: heights: repository '/tmp/ugc/src/lean/.lake/packages/heights' has local changes\n"}
+,{"stream_name":"stdout","time":3972.900856288,"data":"warning: genl: repository '/tmp/ugc/src/lean/.lake/packages/genl' has local changes\n"}
+,{"stream_name":"stdout","time":3972.900860474,"data":"warning: tate-curves-theta: repository '/tmp/ugc/src/lean/.lake/packages/tate-curves-theta' has local changes\n"}
+,{"stream_name":"stdout","time":3972.900864664,"data":"warning: iut: repository '/tmp/ugc/src/lean/.lake/packages/iut' has local changes\n"}
+,{"stream_name":"stdout","time":3972.900868933,"data":"warning: gromov: repository '/tmp/ugc/src/lean/.lake/packages/gromov' has local changes\n"}
+,{"stream_name":"stdout","time":3972.900873056,"data":"warning: SphereEversion: repository '/tmp/ugc/src/lean/.lake/packages/SphereEversion' has local changes\n"}
+,{"stream_name":"stdout","time":3972.900877381,"data":"warning: schoenflies-lean: repository '/tmp/ugc/src/lean/.lake/packages/schoenflies-lean' has local changes\n"}
+,{"stream_name":"stdout","time":3972.900881541,"data":"warning: ClassFieldTheory: repository '/tmp/ugc/src/lean/.lake/packages/ClassFieldTheory' has local changes\n"}
+,{"stream_name":"stdout","time":3972.900886094,"data":"warning: AINTLIB: repository '/tmp/ugc/src/lean/.lake/packages/AINTLIB' has local changes\n"}
+,{"stream_name":"stdout","time":3972.900890465,"data":"warning: AbsorptionCutoff: repository '/tmp/ugc/src/lean/.lake/packages/AbsorptionCutoff' has local changes\n"}
+,{"stream_name":"stdout","time":3972.900894798,"data":"warning: StrongPNT: repository '/tmp/ugc/src/lean/.lake/packages/StrongPNT' has local changes\n"}
+,{"stream_name":"stdout","time":3972.900899342,"data":"warning: carleson: repository '/tmp/ugc/src/lean/.lake/packages/carleson' has local changes\n"}
+,{"stream_name":"stdout","time":3972.900905717,"data":"warning: rellich-kondrachov: repository '/tmp/ugc/src/lean/.lake/packages/rellich-kondrachov' has local changes\n"}
+,{"stream_name":"stdout","time":3972.900942931,"data":"warning: Zeta3Irrational: repository '/tmp/ugc/src/lean/.lake/packages/Zeta3Irrational' has local changes\n"}
+,{"stream_name":"stdout","time":3972.900948387,"data":"warning: fixed-point-theorems: repository '/tmp/ugc/src/lean/.lake/packages/fixed-point-theorems' has local changes\n"}
+,{"stream_name":"stdout","time":3972.900952858,"data":"OAI.UniqueGamesTheorem.theorem11 : ∀ (ε δ : ℝ),\n"}
+,{"stream_name":"stdout","time":3972.900958156,"data":"  0 \u003c ε →\n"}
+,{"stream_name":"stdout","time":3972.900963028,"data":"    ε \u003c 1 / 2 →\n"}
+,{"stream_name":"stdout","time":3972.90097192,"data":"      0 \u003c δ → δ \u003c 1 / 2 → Nonempty (OAI.UniqueGamesTheorem.Explicit.MachineOutputContract.BinaryGapReduction ε δ)\n"}
+,{"stream_name":"stdout","time":3972.900978114,"data":"'OAI.UniqueGamesTheorem.theorem11' depends on axioms: [propext, Classical.choice, Quot.sound]\n"}
+,{"stream_name":"stdout","time":3972.900982925,"data":"rc_solution=0\n"}
+,{"stream_name":"stdout","time":3972.900986854,"data":"===== challenge (ComparatorChallenges.UniqueGamesTheorem)\n"}
+,{"stream_name":"stdout","time":3972.900991016,"data":"warning: PrimeNumberTheoremAnd: repository '/tmp/ugc/src/lean/.lake/packages/PrimeNumberTheoremAnd' has local changes\n"}
+,{"stream_name":"stdout","time":3972.90099538,"data":"warning: belyi: repository '/tmp/ugc/src/lean/.lake/packages/belyi' has local changes\n"}
+,{"stream_name":"stdout","time":3972.901004655,"data":"warning: formal-schemes: repository '/tmp/ugc/src/lean/.lake/packages/formal-schemes' has local changes\n"}
+,{"stream_name":"stdout","time":3972.901009024,"data":"warning: elliptic-curves: repository '/tmp/ugc/src/lean/.lake/packages/elliptic-curves' has local changes\n"}
+,{"stream_name":"stdout","time":3972.901013231,"data":"warning: tempered-fundamental-groups: repository '/tmp/ugc/src/lean/.lake/packages/tempered-fundamental-groups' has local changes\n"}
+,{"stream_name":"stdout","time":3972.901017606,"data":"warning: oka: repository '/tmp/ugc/src/lean/.lake/packages/oka' has local changes\n"}
+,{"stream_name":"stdout","time":3972.90102172,"data":"warning: orbicurve-cores: repository '/tmp/ugc/src/lean/.lake/packages/orbicurve-cores' has local changes\n"}
+,{"stream_name":"stdout","time":3972.901025976,"data":"warning: pi1: repository '/tmp/ugc/src/lean/.lake/packages/pi1' has local changes\n"}
+,{"stream_name":"stdout","time":3972.901030164,"data":"warning: heights: repository '/tmp/ugc/src/lean/.lake/packages/heights' has local changes\n"}
+,{"stream_name":"stdout","time":3972.901034535,"data":"warning: genl: repository '/tmp/ugc/src/lean/.lake/packages/genl' has local changes\n"}
+,{"stream_name":"stdout","time":3972.901038626,"data":"warning: tate-curves-theta: repository '/tmp/ugc/src/lean/.lake/packages/tate-curves-theta' has local changes\n"}
+,{"stream_name":"stdout","time":3972.901045254,"data":"warning: iut: repository '/tmp/ugc/src/lean/.lake/packages/iut' has local changes\n"}
+,{"stream_name":"stdout","time":3972.901053052,"data":"warning: gromov: repository '/tmp/ugc/src/lean/.lake/packages/gromov' has local changes\n"}
+,{"stream_name":"stdout","time":3972.901055954,"data":"warning: SphereEversion: repository '/tmp/ugc/src/lean/.lake/packages/SphereEversion' has local changes\n"}
+,{"stream_name":"stdout","time":3972.901058916,"data":"warning: schoenflies-lean: repository '/tmp/ugc/src/lean/.lake/packages/schoenflies-lean' has local changes\n"}
+,{"stream_name":"stdout","time":3972.901061682,"data":"warning: ClassFieldTheory: repository '/tmp/ugc/src/lean/.lake/packages/ClassFieldTheory' has local changes\n"}
+,{"stream_name":"stdout","time":3972.901064437,"data":"warning: AINTLIB: repository '/tmp/ugc/src/lean/.lake/packages/AINTLIB' has local changes\n"}
+,{"stream_name":"stdout","time":3972.901067222,"data":"warning: AbsorptionCutoff: repository '/tmp/ugc/src/lean/.lake/packages/AbsorptionCutoff' has local changes\n"}
+,{"stream_name":"stdout","time":3972.901069972,"data":"warning: StrongPNT: repository '/tmp/ugc/src/lean/.lake/packages/StrongPNT' has local changes\n"}
+,{"stream_name":"stdout","time":3972.901073373,"data":"warning: carleson: repository '/tmp/ugc/src/lean/.lake/packages/carleson' has local changes\n"}
+,{"stream_name":"stdout","time":3972.901076219,"data":"warning: rellich-kondrachov: repository '/tmp/ugc/src/lean/.lake/packages/rellich-kondrachov' has local changes\n"}
+,{"stream_name":"stdout","time":3972.901079014,"data":"warning: Zeta3Irrational: repository '/tmp/ugc/src/lean/.lake/packages/Zeta3Irrational' has local changes\n"}
+,{"stream_name":"stdout","time":3972.901081765,"data":"warning: fixed-point-theorems: repository '/tmp/ugc/src/lean/.lake/packages/fixed-point-theorems' has local changes\n"}
+,{"stream_name":"stdout","time":3972.901084622,"data":"OAI.UniqueGamesTheorem.theorem11 : ∀ (ε δ : ℝ),\n"}
+,{"stream_name":"stdout","time":3972.901087509,"data":"  0 \u003c ε →\n"}
+,{"stream_name":"stdout","time":3972.901090335,"data":"    ε \u003c 1 / 2 →\n"}
+,{"stream_name":"stdout","time":3972.901093022,"data":"      0 \u003c δ → δ \u003c 1 / 2 → Nonempty (OAI.UniqueGamesTheorem.Explicit.MachineOutputContract.BinaryGapReduction ε δ)\n"}
+,{"stream_name":"stdout","time":3972.901105831,"data":"'OAI.UniqueGamesTheorem.theorem11' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]\n"}
+,{"stream_name":"stdout","time":3972.901108851,"data":"rc_challenge=0\n"}
+,{"stream_name":"stdout","time":3972.90111156,"data":"\n"}
+,{"stream_name":"stdout","time":3972.902459982,"data":"  SUMMARY.txt  6874 B\n"}
+,{"stream_name":"stdout","time":3972.902489108,"data":"  facts.txt  601 B\n"}
+,{"stream_name":"stdout","time":3972.902494534,"data":"  full_axioms.log  5364 B\n"}
+,{"stream_name":"stdout","time":3972.902498586,"data":"  full_build_explicit.log  2499 B\n"}
+,{"stream_name":"stdout","time":3972.903852613,"data":"  full_comparator_real.log  55211 B\n"}
+,{"stream_name":"stdout","time":3972.903882099,"data":"  full_lake_update.log  19474 B\n"}
+,{"stream_name":"stdout","time":3972.903889448,"data":"  full_sandbox_test.log  1613 B\n"}
+,{"stream_name":"stdout","time":3972.903894773,"data":"  live_machine.txt  308 B\n"}
+,{"stream_name":"stdout","time":3972.903926028,"data":"  live_tail.txt  7840 B\n"}
+,{"stream_name":"stdout","time":3972.903937736,"data":"  log_tail_axioms.txt  5364 B\n"}
+,{"stream_name":"stdout","time":3972.90395767,"data":"  log_tail_build_explicit.txt  2499 B\n"}
+,{"stream_name":"stdout","time":3972.90400508,"data":"  log_tail_cache_get.txt  2584 B\n"}
+,{"stream_name":"stdout","time":3972.904012584,"data":"  log_tail_clone.txt  1265 B\n"}
+,{"stream_name":"stdout","time":3972.904018451,"data":"  log_tail_comparator_real.txt  19536 B\n"}
+,{"stream_name":"stdout","time":3972.904024153,"data":"  log_tail_elan.txt  529 B\n"}
+,{"stream_name":"stdout","time":3972.904041411,"data":"  log_tail_lake_update.txt  14275 B\n"}
+,{"stream_name":"stdout","time":3972.904046839,"data":"  log_tail_landrun_build.txt  342 B\n"}
+,{"stream_name":"stdout","time":3972.904051405,"data":"  log_tail_sandbox_test.txt  1613 B\n"}
+,{"stream_name":"stdout","time":3972.904056192,"data":"  log_tail_sysinfo.txt  1206 B\n"}
+,{"stream_name":"stdout","time":3972.90419913,"data":"  log_tail_tools_lean.txt  1501 B\n"}
+,{"stream_name":"stdout","time":3972.904210727,"data":"  manifest_diff_after_lake_update.txt  0 B\n"}
+,{"stream_name":"stdout","time":3972.904214978,"data":"  progress.txt  1175 B\n"}
+,{"stream_name":"stdout","time":3972.904219227,"data":"  timings.txt  430 B\n"}
+,{"stream_name":"stderr","time":3977.036539796,"data":"/usr/local/lib/python3.13/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":3977.036583803,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":3977.712130804,"data":"/usr/local/lib/python3.13/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":3977.712173742,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":3981.474867849,"data":"[NbConvertApp] Converting notebook __script__.ipynb to html\n"}
+,{"stream_name":"stderr","time":3983.425398059,"data":"[NbConvertApp] Writing 313655 bytes to __results__.html\n"}
+]
